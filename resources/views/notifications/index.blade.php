@@ -120,7 +120,7 @@
                     <!-- Action Buttons -->
                     <div class="flex items-center space-x-3">
                         @if($notification->data && isset($notification->data['task_id']))
-                        <a href="{{ route(Auth::user()->isDeveloper() || Auth::user()->isDesigner() ? 'developer.tasks.show' : (Auth::user()->isLeader() ? 'leader.tasks.show' : 'admin.tasks.show'), $notification->data['task_id']) }}" 
+                        <a href="{{ route(Auth::user()->isDeveloper() || Auth::user()->isDesigner() ? 'developer.tasks.show' : 'leader.tasks.show', $notification->data['task_id']) }}" 
                            onclick="markAsRead({{ $notification->id }})"
                            class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
