@@ -1,0 +1,32 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "dev:serve": "php artisan serve",
+        "dev:all": "concurrently \"npm run dev\" \"php artisan serve\"",
+        "fresh": "php artisan migrate:fresh --seed && npm run build"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.4.21",
+        "axios": "^1.6.4",
+        "concurrently": "^9.2.1",
+        "laravel-vite-plugin": "^1.0.0",
+        "postcss": "^8.5.6",
+        "tailwindcss": "^3.4.17",
+        "vite": "^5.0.0"
+    },
+    "dependencies": {
+        "@headlessui/vue": "^1.7.23",
+        "@heroicons/vue": "^2.2.0",
+        "@inertiajs/vue3": "^2.1.5",
+        "@vitejs/plugin-vue": "^6.0.1",
+        "aos": "^2.3.4",
+        "chart.js": "^4.4.1",
+        "laravel-echo": "^2.2.6",
+        "pusher-js": "^8.4.0",
+        "vue": "^3.5.21"
+    }
+}

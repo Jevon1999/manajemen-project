@@ -1,0 +1,221 @@
+{
+  "info": {
+    "_postman_id": "b9c5b4e9-5e89-4a2b-8a9c-8a9ee3f3c0aa",
+    "name": "Manajemen Project API v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Collection for Laravel API v1 (Sanctum). Login first to set {{token}}."
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost/api/v1" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"admin@example.com\",\n  \"password\": \"password\",\n  \"device_name\": \"postman\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('token', json.token); pm.environment.set('token', json.token); }",
+                  "pm.test('Login returns token', function(){ pm.expect(json.token).to.be.a('string'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/auth/me", "host": ["{{base_url}}"], "path": ["auth","me"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/auth/logout", "host": ["{{base_url}}"], "path": ["auth","logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "List Projects",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/projects?q=&status=&priority=", "host": ["{{base_url}}"], "path": ["projects"], "query": [
+              {"key":"q","value":""},
+              {"key":"status","value":""},
+              {"key":"priority","value":""}
+            ] }
+          }
+        },
+        {
+          "name": "Create Project",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{base_url}}/projects", "host": ["{{base_url}}"], "path": ["projects"] },
+            "body": { "mode": "raw", "raw": "{\n  \"project_name\": \"New App\",\n  \"description\": \"Mobile app\",\n  \"deadline\": \"2025-12-31\",\n  \"status\": \"planning\",\n  \"priority\": \"high\"\n}" }
+          }
+        },
+        {
+          "name": "Show Project",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/projects/1", "host": ["{{base_url}}"], "path": ["projects","1"] }
+          }
+        },
+        {
+          "name": "Update Project",
+          "request": {
+            "method": "PATCH",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{base_url}}/projects/1", "host": ["{{base_url}}"], "path": ["projects","1"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"active\",\n  \"priority\": \"medium\"\n}" }
+          }
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/projects/1", "host": ["{{base_url}}"], "path": ["projects","1"] }
+          }
+        },
+        {
+          "name": "List Members",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/projects/1/members", "host": ["{{base_url}}"], "path": ["projects","1","members"] }
+          }
+        },
+        {
+          "name": "Add Member",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{base_url}}/projects/1/members", "host": ["{{base_url}}"], "path": ["projects","1","members"] },
+            "body": { "mode": "raw", "raw": "{\n  \"user_id\": 2,\n  \"role\": \"member\"\n}" }
+          }
+        },
+        {
+          "name": "Remove Member",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/projects/1/members/2", "host": ["{{base_url}}"], "path": ["projects","1","members","2"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cards",
+      "item": [
+        {
+          "name": "List Cards by Project",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/projects/1/cards", "host": ["{{base_url}}"], "path": ["projects","1","cards"] }
+          }
+        },
+        {
+          "name": "Create Card",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{base_url}}/projects/1/cards", "host": ["{{base_url}}"], "path": ["projects","1","cards"] },
+            "body": { "mode": "raw", "raw": "{\n  \"board_id\": 1,\n  \"card_title\": \"Design login\",\n  \"description\": \"...\",\n  \"priority\": \"high\",\n  \"status\": \"todo\",\n  \"due_date\": \"2025-12-01\"\n}" }
+          }
+        },
+        {
+          "name": "Show Card",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/cards/1", "host": ["{{base_url}}"], "path": ["cards","1"] }
+          }
+        },
+        {
+          "name": "Update Card",
+          "request": {
+            "method": "PATCH",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{base_url}}/cards/1", "host": ["{{base_url}}"], "path": ["cards","1"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"in-progress\",\n  \"priority\": \"medium\"\n}" }
+          }
+        },
+        {
+          "name": "Delete Card",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{base_url}}/cards/1", "host": ["{{base_url}}"], "path": ["cards","1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subtasks",
+      "item": [
+        {
+          "name": "List Subtasks",
+          "request": {"method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": {"raw": "{{base_url}}/cards/1/subtasks", "host": ["{{base_url}}"], "path": ["cards","1","subtasks"]}}
+        },
+        {
+          "name": "Add Subtask",
+          "request": {"method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ], "url": {"raw": "{{base_url}}/cards/1/subtasks", "host": ["{{base_url}}"], "path": ["cards","1","subtasks"]}, "body": {"mode": "raw", "raw": "{\n  \"subtaks_title\": \"UI\",\n  \"description\": \"...\",\n  \"status\": \"todo\",\n  \"position\": 1\n}"}}
+        },
+        {
+          "name": "Update Subtask",
+          "request": {"method": "PATCH", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ], "url": {"raw": "{{base_url}}/subtasks/1", "host": ["{{base_url}}"], "path": ["subtasks","1"]}, "body": {"mode": "raw", "raw": "{\n  \"status\": \"done\"\n}"}}
+        },
+        {
+          "name": "Delete Subtask",
+          "request": {"method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": {"raw": "{{base_url}}/subtasks/1", "host": ["{{base_url}}"], "path": ["subtasks","1"]}}
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {"name": "List Comments", "request": {"method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": {"raw": "{{base_url}}/cards/1/comments", "host": ["{{base_url}}"], "path": ["cards","1","comments"]}}},
+        {"name": "Add Comment", "request": {"method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ], "url": {"raw": "{{base_url}}/cards/1/comments", "host": ["{{base_url}}"], "path": ["cards","1","comments"]}, "body": {"mode": "raw", "raw": "{\n  \"comment_text\": \"Looks good\",\n  \"comment_type\": \"note\"\n}"}}},
+        {"name": "Delete Comment", "request": {"method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": {"raw": "{{base_url}}/comments/1", "host": ["{{base_url}}"], "path": ["comments","1"]}}}
+      ]
+    },
+    {
+      "name": "Time Logs",
+      "item": [
+        {"name": "List Logs", "request": {"method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": {"raw": "{{base_url}}/cards/1/timelogs", "host": ["{{base_url}}"], "path": ["cards","1","timelogs"]}}},
+        {"name": "Add Log", "request": {"method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ], "url": {"raw": "{{base_url}}/cards/1/timelogs", "host": ["{{base_url}}"], "path": ["cards","1","timelogs"]}, "body": {"mode": "raw", "raw": "{\n  \"subtask_id\": null,\n  \"start_time\": \"2025-01-01T09:00:00\",\n  \"end_time\": \"2025-01-01T10:30:00\",\n  \"description\": \"Design\"\n}"}}},
+        {"name": "Update Log", "request": {"method": "PATCH", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" } ], "url": {"raw": "{{base_url}}/timelogs/1", "host": ["{{base_url}}"], "path": ["timelogs","1"]}, "body": {"mode": "raw", "raw": "{\n  \"description\": \"Refinement\"\n}"}}},
+        {"name": "Delete Log", "request": {"method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ], "url": {"raw": "{{base_url}}/timelogs/1", "host": ["{{base_url}}"], "path": ["timelogs","1"]}}}
+      ]
+    }
+  ]
+}

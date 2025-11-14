@@ -1,0 +1,15 @@
+{
+  "diagnostics": {
+    "undefinedVariables": false,
+    "undefinedTypes": false,
+    "undefinedFunctions": false,
+    "undefinedConstants": false,
+    "undefinedClassConstants": false,
+    "undefinedMethods": false,
+    "undefinedProperties": false
+  },
+  "completion": {
+    "triggerParameterHints": true,
+    "maxItems": 100
+  }
+}
