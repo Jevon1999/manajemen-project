@@ -20,6 +20,81 @@
     
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Custom Scrollbar Styles -->
+    <style>
+        /* ===================================
+           Custom Scrollbar for Sidebar
+           =================================== */
+        
+        /* Webkit browsers (Chrome, Safari, Edge) */
+        aside::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        aside::-webkit-scrollbar-track {
+            background: rgba(139, 92, 246, 0.1); /* Purple-100 with opacity */
+            border-radius: 10px;
+        }
+        
+        aside::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.5); /* Purple-500 with opacity */
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        aside::-webkit-scrollbar-thumb:hover {
+            background: rgba(124, 58, 237, 0.8); /* Purple-600 with opacity */
+        }
+        
+        /* Firefox */
+        aside {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(139, 92, 246, 0.5) rgba(139, 92, 246, 0.1);
+        }
+        
+        /* Smooth scroll behavior */
+        aside {
+            scroll-behavior: smooth;
+        }
+        
+        /* Hide scrollbar on mobile for cleaner look */
+        @media (max-width: 768px) {
+            aside::-webkit-scrollbar {
+                width: 3px;
+            }
+            
+            aside {
+                scrollbar-width: thin;
+            }
+        }
+        
+        /* Optional: Custom scrollbar for main content area */
+        main::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        main::-webkit-scrollbar-track {
+            background: #f1f5f9; /* Gray-100 */
+            border-radius: 10px;
+        }
+        
+        main::-webkit-scrollbar-thumb {
+            background: #cbd5e1; /* Gray-300 */
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        main::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; /* Gray-400 */
+        }
+        
+        /* Firefox - main content */
+        main {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f1f5f9;
+        }
+    </style>
 </head>
 <body class="font-sans antialiased bg-gray-100" x-data="{ sidebarOpen: false }">
     <div class="flex h-screen overflow-hidden">

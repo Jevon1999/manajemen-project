@@ -1,5 +1,5 @@
 {{-- Simplified Role-Based Sidebar --}}
-<aside class="w-64 h-full bg-gradient-to-b from-purple-900 via-indigo-900 to-purple-800 text-white flex flex-col shadow-2xl lg:rounded-r-2xl overflow-y-auto">
+<aside class="w-64 h-full bg-gradient-to-b from-purple-900 via-indigo-900 to-purple-800 text-white flex flex-col shadow-2xl lg:rounded-r-2xl overflow-y-auto scrollbar-custom">
     <!-- Header Sidebar -->
     <div class="p-4 sm:p-6 border-b border-gray-700 flex-shrink-0">
         <div class="flex items-center space-x-3">
