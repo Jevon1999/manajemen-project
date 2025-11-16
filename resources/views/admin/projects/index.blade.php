@@ -515,334 +515,53 @@
 </div>
 </transition>
 
-<!-- Modal Edit Project (Vue.js) -->
-<transition name="modal">
-    <div v-if="showEditModal" v-cloak class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4">
-        <!-- Backdrop -->
-        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 transition-opacity" @click="closeEditModal"></div>
-        
-        <!-- Modal Content -->
-        <div class="relative mx-auto border w-full max-w-3xl shadow-2xl rounded-lg bg-white transform transition-all z-10" @click.stop>
-            <!-- Header -->
-            <div class="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-green-50 to-emerald-50">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-gradient-to-br from-green-500 to-emerald-600 p-2.5 rounded-lg shadow-md">
-                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-900">Edit Proyek</h3>
-                        <p class="text-xs text-gray-600">Perbarui informasi proyek Anda</p>
-                    </div>
-                </div>
-                <button @click="closeEditModal" type="button"
-                        class="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-white hover:shadow-md"
-                        title="Tutup (ESC)">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <form @submit.prevent="updateProject" class="modal-content p-6">
-                @csrf
-                @method('PUT')
-            
-            <!-- Tabs Navigation -->
-            <div class="border-b border-gray-200 mb-6">
-                <nav class="-mb-px flex space-x-6">
-                    <button @click="activeTab = 'basic'" :class="activeTab === 'basic' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                            class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition-all">
-                        <div class="flex items-center space-x-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <span>Info Dasar</span>
-                        </div>
-                    </button>
-                    <button @click="activeTab = 'settings'" :class="activeTab === 'settings' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                            class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition-all">
-                        <div class="flex items-center space-x-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                            <span>Pengaturan</span>
-                        </div>
-                    </button>
-                </nav>
-            </div>
-
-            <!-- Tab Content -->
-            <div class="space-y-5">
-                <!-- Tab: Info Dasar -->
-                <div v-show="activeTab === 'basic'" class="space-y-5">
-                    <!-- Nama Proyek -->
-                    <div class="transform transition-all">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Nama Proyek <span class="text-red-500">*</span>
-                        </label>
-                        <input v-model="editForm.project_name" type="text" required 
-                               class="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 transition-all sm:text-sm"
-                               placeholder="Masukkan nama proyek">
-                    </div>
-
-                    <!-- Deskripsi -->
-                    <div class="transform transition-all">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Deskripsi</label>
-                        <textarea v-model="editForm.description" rows="4" 
-                                  class="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 transition-all sm:text-sm"
-                                  placeholder="Deskripsikan proyek Anda..."></textarea>
-                        <p class="mt-1 text-xs text-gray-500">@{{ editForm.description ? editForm.description.length : 0 }} karakter</p>
-                    </div>
-
-                    <!-- Progress Bar dengan Slider -->
-                    <div class="transform transition-all">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Progress Penyelesaian
-                            <span class="ml-2 text-green-600 font-bold">@{{ editForm.completion_percentage || 0 }}%</span>
-                        </label>
-                        <div class="space-y-3">
-                            <input v-model="editForm.completion_percentage" type="range" min="0" max="100" 
-                                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-green"
-                                   @input="updateProgress">
-                            <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-                                <div class="h-full transition-all duration-500 rounded-full flex items-center justify-end pr-2"
-                                     :style="{ width: (editForm.completion_percentage || 0) + '%', backgroundColor: getProgressColor(editForm.completion_percentage) }">
-                                    <span v-if="editForm.completion_percentage > 10" class="text-xs font-bold text-white">
-                                        @{{ editForm.completion_percentage }}%
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                        <!-- Status -->
-                        <div class="transform transition-all">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Status Proyek</label>
-                            <div class="relative">
-                                <select v-model="editForm.status" 
-                                        class="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 transition-all sm:text-sm appearance-none">
-                                    <option value="planning">🎯 Planning</option>
-                                    <option value="active">✅ Aktif</option>
-                                    <option value="on_hold">⏸️ Ditunda</option>
-                                    <option value="completed">🎉 Selesai</option>
-                                    <option value="cancelled">❌ Dibatalkan</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Prioritas -->
-                        <div class="transform transition-all">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Prioritas</label>
-                            <div class="relative">
-                                <select v-model="editForm.priority" 
-                                        class="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 transition-all sm:text-sm appearance-none">
-                                    <option value="low">🟢 Rendah</option>
-                                    <option value="medium">🟡 Sedang</option>
-                                    <option value="high">🔴 Tinggi</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                        <!-- Kategori -->
-                        <div class="transform transition-all">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Kategori</label>
-                            <input v-model="editForm.category" type="text" 
-                                   class="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 transition-all sm:text-sm" 
-                                   placeholder="Web, Mobile, Desktop, dll">
-                        </div>
-
-                        <!-- Deadline -->
-                        <div class="transform transition-all">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Deadline</label>
-                            <input v-model="editForm.deadline" type="date" 
-                                   class="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 transition-all sm:text-sm">
-                            <p v-if="editForm.deadline" class="mt-1 text-xs" :class="isDeadlineClose(editForm.deadline) ? 'text-red-600' : 'text-gray-500'">
-                                <span v-if="isDeadlineClose(editForm.deadline)">⚠️ Deadline mendekat!</span>
-                                <span v-else>📅 @{{ formatDeadline(editForm.deadline) }}</span>
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Budget -->
-                    <div class="transform transition-all">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Budget Proyek</label>
-                        <div class="relative rounded-lg shadow-sm">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <span class="text-gray-500 font-medium sm:text-sm">Rp</span>
-                            </div>
-                            <input v-model="editForm.budget" type="number" 
-                                   class="block w-full pl-12 pr-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 transition-all sm:text-sm" 
-                                   placeholder="0"
-                                   @input="formatBudget">
-                        </div>
-                        <p v-if="editForm.budget" class="mt-1 text-xs text-gray-500">
-                            💰 @{{ formatCurrency(editForm.budget) }}
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Tab: Pengaturan -->
-                <div v-show="activeTab === 'settings'" class="space-y-5">
-                    <!-- Visibility Settings -->
-                    <div class="bg-gray-50 rounded-lg p-4 space-y-4">
-                        <h4 class="text-sm font-bold text-gray-900 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                            Pengaturan Visibilitas
-                        </h4>
-                        
-                        <!-- Public Visibility -->
-                        <label class="flex items-center justify-between p-3 bg-white rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <div class="flex-shrink-0">
-                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">Proyek Publik</p>
-                                    <p class="text-xs text-gray-500">Semua orang dapat melihat proyek ini</p>
-                                </div>
-                            </div>
-                            <input v-model="editForm.public_visibility" type="checkbox" 
-                                   class="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded transition-all">
-                        </label>
-
-                        <!-- Allow Member Invite -->
-                        <label class="flex items-center justify-between p-3 bg-white rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <div class="flex-shrink-0">
-                                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">Izinkan Undang Anggota</p>
-                                    <p class="text-xs text-gray-500">Member dapat mengundang anggota baru</p>
-                                </div>
-                            </div>
-                            <input v-model="editForm.allow_member_invite" type="checkbox" 
-                                   class="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded transition-all">
-                        </label>
-
-                        <!-- Notifications Enabled -->
-                        <label class="flex items-center justify-between p-3 bg-white rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <div class="flex-shrink-0">
-                                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">Notifikasi Aktif</p>
-                                    <p class="text-xs text-gray-500">Terima notifikasi untuk proyek ini</p>
-                                </div>
-                            </div>
-                            <input v-model="editForm.notifications_enabled" type="checkbox" 
-                                   class="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded transition-all">
-                        </label>
-
-                        <!-- Archived -->
-                        <label class="flex items-center justify-between p-3 bg-white rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center space-x-3">
-                                <div class="flex-shrink-0">
-                                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">Arsipkan Proyek</p>
-                                    <p class="text-xs text-gray-500">Proyek tidak akan muncul di daftar aktif</p>
-                                </div>
-                            </div>
-                            <input v-model="editForm.is_archived" type="checkbox" 
-                                   class="h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded transition-all">
-                        </label>
-                    </div>
-
-                    <!-- Project Statistics (Read-only) -->
-                    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4">
-                        <h4 class="text-sm font-bold text-gray-900 mb-3 flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                            Informasi Tambahan
-                        </h4>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="bg-white rounded p-3">
-                                <p class="text-xs text-gray-500">Dibuat</p>
-                                <p class="text-sm font-medium text-gray-900">@{{ editForm.created_at || '-' }}</p>
-                            </div>
-                            <div class="bg-white rounded p-3">
-                                <p class="text-xs text-gray-500">Terakhir Update</p>
-                                <p class="text-sm font-medium text-gray-900">@{{ editForm.updated_at || '-' }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Actions -->
-            <div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-3 pt-5 border-t border-gray-200 bg-gray-50 -mx-6 -mb-6 px-6 py-4 rounded-b-lg">
-                <div class="flex items-center text-xs text-gray-500">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Terakhir diupdate: @{{ editForm.updated_at || '-' }}
-                </div>
-                <div class="flex space-x-3 w-full sm:w-auto">
-                    <button type="button" @click="closeEditModal" 
-                            class="flex-1 sm:flex-none px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all">
-                        <span class="flex items-center justify-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                            Batal
-                        </span>
-                    </button>
-                    <button type="submit" :disabled="loading"
-                            class="flex-1 sm:flex-none px-8 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-green-600 via-green-600 to-emerald-600 border border-transparent rounded-lg hover:from-green-700 hover:via-green-700 hover:to-emerald-700 hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
-                        <span v-if="!loading" class="flex items-center justify-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            Simpan Perubahan
-                        </span>
-                        <span v-else class="flex items-center justify-center">
-                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Menyimpan...
-                        </span>
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-</transition>
-
 </div>
 <!-- End Vue App -->
+
+@push('scripts')
+<style>
+/* Prevent flashing of uncompiled Vue templates */
+[v-cloak] {
+    display: none !important;
+}
+
+/* Vue Modal Transitions */
+.modal-enter-active, .modal-leave-active {
+    transition: opacity 0.3s ease;
+}
+.modal-enter-from, .modal-leave-to {
+    opacity: 0;
+}
+.modal-enter-active > div, .modal-leave-active > div {
+    transition: transform 0.3s ease;
+}
+.modal-enter-from > div, .modal-leave-to > div {
+    transform: scale(0.95) translateY(-20px);
+}
+
+/* Project Card Animations */
+.group:hover {
+    transform: translateY(-2px);
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Progress bar animation */
+@keyframes progressAnimation {
+    0% {
+        width: 0;
+    }
+}
+
+.bg-gradient-to-r {
+    animation: progressAnimation 1s ease-out;
+}
 
 @push('scripts')
 <style>
@@ -989,38 +708,19 @@ if (typeof Vue !== 'undefined') {
         data() {
             return {
                 showCreateModal: false,
-                showEditModal: false,
-            loading: false,
-            activeTab: 'basic', // 'basic' or 'settings'
-            createForm: {
-                project_name: '',
-                description: '',
-                leader_id: '',
-                status: 'planning',
-                priority: 'medium',
-                category: '',
-                end_date: '',
-                budget: ''
-            },
-            editForm: {
-                project_id: null,
-                project_name: '',
-                description: '',
-                status: 'planning',
-                priority: 'medium',
-                category: '',
-                deadline: '',
-                budget: '',
-                completion_percentage: 0,
-                public_visibility: false,
-                allow_member_invite: true,
-                notifications_enabled: true,
-                is_archived: false,
-                created_at: null,
-                updated_at: null
+                loading: false,
+                createForm: {
+                    project_name: '',
+                    description: '',
+                    leader_id: '',
+                    status: 'planning',
+                    priority: 'medium',
+                    category: '',
+                    end_date: '',
+                    budget: ''
+                }
             }
-        }
-    },
+        },
     methods: {
         openCreateModal() {
             this.showCreateModal = true;
@@ -1030,55 +730,6 @@ if (typeof Vue !== 'undefined') {
             this.showCreateModal = false;
             document.body.style.overflow = 'auto';
             this.resetCreateForm();
-        },
-        openEditModal(projectId) {
-            console.log('openEditModal called with projectId:', projectId);
-            this.loading = true;
-            this.activeTab = 'basic'; // Reset to basic tab
-            console.log('Fetching project data from:', `/admin/projects/${projectId}/edit`);
-            fetch(`/admin/projects/${projectId}/edit`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const project = data.project;
-                this.editForm = {
-                    project_id: project.project_id,
-                    project_name: project.project_name || '',
-                    description: project.description || '',
-                    status: project.status || 'planning',
-                    priority: project.priority || 'medium',
-                    category: project.category || '',
-                    deadline: project.deadline || '',
-                    budget: project.budget || '',
-                    completion_percentage: project.completion_percentage || 0,
-                    public_visibility: project.public_visibility || false,
-                    allow_member_invite: project.allow_member_invite !== false,
-                    notifications_enabled: project.notifications_enabled !== false,
-                    is_archived: project.is_archived || false,
-                    created_at: this.formatDateTime(project.created_at),
-                    updated_at: this.formatDateTime(project.updated_at)
-                };
-                console.log('Edit form populated:', this.editForm);
-                console.log('Setting showEditModal to true');
-                this.showEditModal = true;
-                document.body.style.overflow = 'hidden';
-                this.loading = false;
-                console.log('Modal should be visible now, showEditModal:', this.showEditModal);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                this.showNotification('Gagal memuat data proyek', 'error');
-                this.loading = false;
-            });
-        },
-        closeEditModal() {
-            this.showEditModal = false;
-            document.body.style.overflow = 'auto';
-            this.resetEditForm();
         },
         createProject() {
             this.loading = true;
@@ -1112,49 +763,6 @@ if (typeof Vue !== 'undefined') {
                 this.loading = false;
                 console.error('Error:', error);
                 this.showNotification('Terjadi kesalahan saat membuat proyek', 'error');
-            });
-        },
-        updateProject() {
-            this.loading = true;
-            const formData = new FormData();
-            
-            // Append all form fields except project_id, created_at, updated_at
-            Object.keys(this.editForm).forEach(key => {
-                if (key !== 'project_id' && key !== 'created_at' && key !== 'updated_at') {
-                    const value = this.editForm[key];
-                    // Convert boolean to 1/0 for Laravel
-                    if (typeof value === 'boolean') {
-                        formData.append(key, value ? '1' : '0');
-                    } else if (value !== null && value !== '') {
-                        formData.append(key, value);
-                    }
-                }
-            });
-            formData.append('_method', 'PUT');
-
-            fetch(`/admin/projects/${this.editForm.project_id}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                this.loading = false;
-                if (data.message && data.message.includes('berhasil')) {
-                    this.closeEditModal();
-                    this.showNotification(data.message, 'success');
-                    setTimeout(() => window.location.reload(), 1500);
-                } else {
-                    this.showNotification(data.message || 'Gagal memperbarui proyek', 'error');
-                }
-            })
-            .catch(error => {
-                this.loading = false;
-                console.error('Error:', error);
-                this.showNotification('Terjadi kesalahan saat memperbarui proyek', 'error');
             });
         },
         deleteProject(projectId) {
@@ -1195,36 +803,6 @@ if (typeof Vue !== 'undefined') {
                 budget: ''
             };
         },
-        resetEditForm() {
-            this.editForm = {
-                project_id: null,
-                project_name: '',
-                description: '',
-                status: 'planning',
-                priority: 'medium',
-                category: '',
-                deadline: '',
-                budget: '',
-                completion_percentage: 0,
-                public_visibility: false,
-                allow_member_invite: true,
-                notifications_enabled: true,
-                is_archived: false,
-                created_at: null,
-                updated_at: null
-            };
-            this.activeTab = 'basic';
-        },
-        updateProgress(event) {
-            this.editForm.completion_percentage = parseInt(event.target.value);
-        },
-        getProgressColor(percentage) {
-            if (percentage < 25) return '#ef4444'; // red
-            if (percentage < 50) return '#f59e0b'; // orange
-            if (percentage < 75) return '#eab308'; // yellow
-            if (percentage < 100) return '#22c55e'; // green
-            return '#10b981'; // emerald for 100%
-        },
         formatDeadline(date) {
             if (!date) return '';
             const deadline = new Date(date);
@@ -1254,11 +832,7 @@ if (typeof Vue !== 'undefined') {
                 minimumFractionDigits: 0
             }).format(amount);
         },
-        formatBudget(event) {
-            // Remove non-numeric characters
-            let value = event.target.value.replace(/\D/g, '');
-            this.editForm.budget = value;
-        },
+
         formatDateTime(datetime) {
             if (!datetime) return '-';
             const date = new Date(datetime);
@@ -1290,34 +864,23 @@ if (typeof Vue !== 'undefined') {
         console.log('Vue app mounted hook called');
         // Make methods available globally for onclick handlers
         window.openCreateModal = () => this.openCreateModal();
-        window.openEditModal = (id) => {
-            console.log('window.openEditModal called with id:', id);
-            this.openEditModal(id);
-        };
         window.deleteProject = (id) => this.deleteProject(id);
         
         console.log('Global functions registered:', {
             openCreateModal: typeof window.openCreateModal,
-            openEditModal: typeof window.openEditModal,
             deleteProject: typeof window.deleteProject
         });
         
-        // Ensure modals are closed on mount
-        this.showEditModal = false;
+        // Ensure modal is closed on mount
         this.showCreateModal = false;
-        console.log('Initial modal states:', {
-            showEditModal: this.showEditModal,
+        console.log('Initial modal state:', {
             showCreateModal: this.showCreateModal
         });
         
-        // ESC key handler for closing modals
+        // ESC key handler for closing modal
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (this.showEditModal) {
-                    this.closeEditModal();
-                } else if (this.showCreateModal) {
-                    this.closeCreateModal();
-                }
+            if (e.key === 'Escape' && this.showCreateModal) {
+                this.closeCreateModal();
             }
         });
     }
