@@ -37,11 +37,14 @@ class LeaderDashboardController extends Controller
     {
         $leaderId = Auth::id();
         
-        // Get projects where user is a leader (project manager)
-        $projects = Project::whereHas('members', function($query) use ($leaderId) {
-            $query->where('user_id', $leaderId)
-                  ->where('role', 'project_manager');
-        })->with(['boards.cards.assignments.user'])->get();
+        // Get projects where user is a leader (assigned via leader_id or project_manager role)
+        $projects = Project::where(function($query) use ($leaderId) {
+            $query->where('leader_id', $leaderId)
+                  ->orWhereHas('members', function($q) use ($leaderId) {
+                      $q->where('user_id', $leaderId)
+                        ->where('role', 'project_manager');
+                  });
+        })->with(['boards.cards.assignments.user', 'leader'])->get();
 
         // Calculate statistics
         $stats = $this->calculateStats($projects);
