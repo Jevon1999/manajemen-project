@@ -21,7 +21,7 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Total Proyek</dt>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Total Proye</dt>
                             <dd class="mt-1 text-3xl font-semibold text-gray-900">
                                 {{ $totalProjects ?? 0 }}
                             </dd>
@@ -44,7 +44,7 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Proyek Aktif</dt>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Proyek Akti</dt>
                             <dd class="mt-1 text-3xl font-semibold text-gray-900">
                                 {{ $activeProjects ?? 0 }}
                             </dd>
