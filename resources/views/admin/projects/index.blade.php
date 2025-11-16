@@ -44,7 +44,7 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Proyek Akti</dt>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Proyek Aktif</dt>
                             <dd class="mt-1 text-3xl font-semibold text-gray-900">
                                 {{ $activeProjects ?? 0 }}
                             </dd>
@@ -517,51 +517,6 @@
 
 </div>
 <!-- End Vue App -->
-
-@push('scripts')
-<style>
-/* Prevent flashing of uncompiled Vue templates */
-[v-cloak] {
-    display: none !important;
-}
-
-/* Vue Modal Transitions */
-.modal-enter-active, .modal-leave-active {
-    transition: opacity 0.3s ease;
-}
-.modal-enter-from, .modal-leave-to {
-    opacity: 0;
-}
-.modal-enter-active > div, .modal-leave-active > div {
-    transition: transform 0.3s ease;
-}
-.modal-enter-from > div, .modal-leave-to > div {
-    transform: scale(0.95) translateY(-20px);
-}
-
-/* Project Card Animations */
-.group:hover {
-    transform: translateY(-2px);
-}
-
-/* Line clamp utility */
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* Progress bar animation */
-@keyframes progressAnimation {
-    0% {
-        width: 0;
-    }
-}
-
-.bg-gradient-to-r {
-    animation: progressAnimation 1s ease-out;
-}
 
 @push('scripts')
 <style>
