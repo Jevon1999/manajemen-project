@@ -376,26 +376,137 @@
     </div>
 </div>
 
-<script>
-function markProjectComplete() {
-    if (!confirm('Apakah Anda yakin ingin menandai project ini sebagai selesai?\n\nSemua task harus sudah diselesaikan terlebih dahulu.')) {
-        return;
+<!-- Complete Project Modal (Alpine.js) -->
+<div x-data="{ 
+    showCompleteModal: false,
+    completionNotes: '',
+    delayReason: '',
+    isOverdue: {{ $project->isOverdue() ? 'true' : 'false' }},
+    delayDays: {{ $project->isOverdue() ? now()->diffInDays($project->deadline) : 0 }},
+    submitCompletion() {
+        const form = document.getElementById('complete-form');
+        form.submit();
     }
-    
-    // Create form and submit
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '{{ route("leader.projects.complete", $project->project_id) }}';
-    
-    const csrfToken = document.createElement('input');
-    csrfToken.type = 'hidden';
-    csrfToken.name = '_token';
-    csrfToken.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    form.appendChild(csrfToken);
-    
-    document.body.appendChild(form);
-    form.submit();
-}
+}" x-cloak>
+    <!-- Modal Backdrop -->
+    <div x-show="showCompleteModal"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4"
+         @click.self="showCompleteModal = false">
+        
+        <!-- Modal Content -->
+        <div x-show="showCompleteModal"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             class="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
+             @click.stop>
+            
+            <!-- Overdue Warning (if applicable) -->
+            <div x-show="isOverdue" class="mb-4 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">
+                            ⚠️ Project Terlambat
+                        </h3>
+                        <div class="mt-2 text-sm text-yellow-700">
+                            <p>Deadline: {{ $project->deadline ? $project->deadline->format('d M Y') : '-' }}</p>
+                            <p>Hari ini: {{ now()->format('d M Y') }}</p>
+                            <p class="font-semibold mt-1">Terlambat: <span x-text="delayDays"></span> hari</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">
+                    <span x-show="!isOverdue">✅ Selesaikan Project</span>
+                    <span x-show="isOverdue">⚠️ Selesaikan Project (Terlambat)</span>
+                </h3>
+                <button @click="showCompleteModal = false" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Form -->
+            <form id="complete-form" method="POST" action="{{ route('leader.projects.complete', $project->project_id) }}">
+                @csrf
+                
+                <!-- Completion Notes -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Catatan Penyelesaian
+                    </label>
+                    <textarea name="completion_notes" 
+                              x-model="completionNotes"
+                              rows="3" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                              placeholder="Tambahkan catatan mengenai penyelesaian project..."></textarea>
+                    <p class="mt-1 text-xs text-gray-500">Optional - dokumentasi hasil project</p>
+                </div>
+
+                <!-- Delay Reason (if overdue) -->
+                <div x-show="isOverdue" class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Alasan Keterlambatan <span class="text-red-500">*</span>
+                    </label>
+                    <textarea name="delay_reason" 
+                              x-model="delayReason"
+                              rows="3" 
+                              required
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                              placeholder="Jelaskan alasan project terlambat diselesaikan..."></textarea>
+                    <p class="mt-1 text-xs text-gray-500">Wajib diisi untuk project yang terlambat</p>
+                </div>
+
+                <input type="hidden" name="is_overdue" :value="isOverdue ? '1' : '0'">
+
+                <!-- Actions -->
+                <div class="flex space-x-3 mt-6">
+                    <button type="button" 
+                            @click="showCompleteModal = false"
+                            class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                        Batal
+                    </button>
+                    <button type="submit"
+                            class="flex-1 px-4 py-2 text-white rounded-lg transition-colors"
+                            :class="isOverdue ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-green-600 hover:bg-green-700'">
+                        <span x-show="!isOverdue">✅ Selesaikan</span>
+                        <span x-show="isOverdue">⚠️ Selesaikan Dengan Catatan</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Trigger: Update markProjectComplete to show modal -->
+    <script>
+        // Override the global function to use Alpine modal
+        window.markProjectComplete = function() {
+            const alpineComponent = document.querySelector('[x-data]').__x.$data;
+            alpineComponent.showCompleteModal = true;
+        };
+    </script>
+</div>
+
+<script>
+// markProjectComplete is already defined in Alpine component above
 
 function reopenProject() {
     if (!confirm('Apakah Anda yakin ingin membuka kembali project yang sudah selesai ini?')) {

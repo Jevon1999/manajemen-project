@@ -641,10 +641,18 @@ class ProjectLeaderController extends Controller
             if ($project->status === 'completed') {
                 return redirect()->back()->with('warning', 'Project is already completed');
             }
+
+            // Validate request for completion notes and delay reason
+            $validated = $request->validate([
+                'completion_notes' => 'nullable|string|max:1000',
+                'delay_reason' => 'nullable|required_if:is_overdue,true|string|max:500',
+                'is_overdue' => 'nullable|boolean',
+                'force_complete' => 'nullable|boolean' // Allow force completion even with pending tasks
+            ]);
             
             DB::beginTransaction();
             
-            // Validate all tasks are completed
+            // Validate all tasks are completed (unless force_complete)
             $totalTasks = $project->boards->sum(function($board) {
                 return $board->cards->count();
             });
@@ -660,7 +668,8 @@ class ProjectLeaderController extends Controller
                 return redirect()->back()->with('error', 'Cannot complete project: No tasks found in this project.');
             }
             
-            if ($pendingTasks > 0) {
+            // Check pending tasks unless force_complete is true
+            if ($pendingTasks > 0 && !($validated['force_complete'] ?? false)) {
                 DB::rollBack();
                 return redirect()->back()->with('error', "Cannot complete project: {$pendingTasks} task(s) still pending. All tasks must be marked as 'Done' first.");
             }
@@ -671,14 +680,15 @@ class ProjectLeaderController extends Controller
                 'leader_id' => $user->user_id,
                 'total_tasks' => $totalTasks,
                 'completed_tasks' => $completedTasks,
+                'pending_tasks' => $pendingTasks,
+                'is_overdue' => $project->isOverdue(),
             ]);
             
-            // Update project status to completed
-            $project->update([
-                'status' => 'completed',
-                'completion_percentage' => 100,
-                'last_activity_at' => now(),
-            ]);
+            // Use model method to mark as completed with tracking
+            $project->markAsCompleted(
+                $validated['completion_notes'] ?? null,
+                $validated['delay_reason'] ?? null
+            );
             
             Log::info("Project marked as completed", [
                 'project_id' => $project->project_id,
@@ -699,8 +709,13 @@ class ProjectLeaderController extends Controller
             
             DB::commit();
             
+            // Prepare success message with delay info
+            $message = $project->is_overdue 
+                ? "✅ Project berhasil diselesaikan! (Terlambat {$project->delay_days} hari) 🎉"
+                : '✅ Project berhasil diselesaikan tepat waktu! 🎉';
+            
             return redirect()->route('leader.projects.show', $project->project_id)
-                ->with('success', 'Project completed successfully! 🎉');
+                ->with('success', $message);
             
         } catch (\Exception $e) {
             DB::rollBack();

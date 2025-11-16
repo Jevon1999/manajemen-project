@@ -221,4 +221,52 @@ class LeaderController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Member role updated successfully!']);
     }
+
+    /**
+     * Mark project as completed
+     */
+    public function completeProject(Request $request, $projectId)
+    {
+        $leaderId = Auth::id();
+        
+        // Find project and verify it's assigned to this leader
+        $project = Project::findOrFail($projectId);
+        
+        // Check if user is project manager or admin
+        $hasAccess = ProjectMember::where('user_id', $leaderId)
+            ->where('project_id', $projectId)
+            ->where('role', 'project_manager')
+            ->exists();
+
+        if (!$hasAccess && Auth::user()->role !== 'admin') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menyelesaikan project ini.');
+        }
+
+        // Check if already completed
+        if ($project->status === 'completed') {
+            return redirect()->back()->with('error', 'Project sudah diselesaikan sebelumnya.');
+        }
+
+        // Validate request
+        $validated = $request->validate([
+            'completion_notes' => 'nullable|string|max:1000',
+            'delay_reason' => 'nullable|required_if:is_overdue,true|string|max:500',
+            'is_overdue' => 'nullable|boolean'
+        ]);
+
+        // Mark as completed using model method
+        $project->markAsCompleted(
+            $validated['completion_notes'] ?? null,
+            $validated['delay_reason'] ?? null
+        );
+
+        // Prepare success message
+        $message = $project->is_overdue 
+            ? "✅ Project berhasil diselesaikan! (Terlambat {$project->delay_days} hari)"
+            : '✅ Project berhasil diselesaikan tepat waktu!';
+
+        return redirect()
+            ->route('leader.projects.show', $projectId)
+            ->with('success', $message);
+    }
 }

@@ -39,7 +39,11 @@ class Project extends Model
         'completion_percentage',
         'last_activity_at',
         'is_archived',
-        'completed_at'
+        'completed_at',
+        'delay_days',
+        'delay_reason',
+        'completion_notes',
+        'is_overdue'
     ];
     
     /**
@@ -55,8 +59,10 @@ class Project extends Model
         'public_visibility' => 'boolean',
         'allow_member_invite' => 'boolean',
         'is_archived' => 'boolean',
+        'is_overdue' => 'boolean',
         'budget' => 'decimal:2',
-        'completion_percentage' => 'integer'
+        'completion_percentage' => 'integer',
+        'delay_days' => 'integer'
     ];
     
     /**
@@ -317,5 +323,114 @@ class Project extends Model
         });
         
         return (int) (($completedTasks / $totalTasks) * 100);
+    }
+
+    /**
+     * Check if project is currently overdue (not completed yet)
+     */
+    public function isOverdue(): bool
+    {
+        if ($this->status === 'completed' || !$this->deadline) {
+            return false;
+        }
+        
+        return now()->isAfter($this->deadline);
+    }
+
+    /**
+     * Calculate delay in days between deadline and completion
+     */
+    public function calculateDelay(): int
+    {
+        if (!$this->deadline || !$this->completed_at) {
+            return 0;
+        }
+        
+        // Return positive number if late, 0 if on time
+        $delay = $this->deadline->diffInDays($this->completed_at, false);
+        return max(0, (int) $delay);
+    }
+
+    /**
+     * Mark project as completed with optional notes and delay reason
+     */
+    public function markAsCompleted(?string $notes = null, ?string $delayReason = null): void
+    {
+        $this->status = 'completed';
+        $this->completed_at = now();
+        $this->completion_notes = $notes;
+        $this->completion_percentage = 100;
+        
+        // Check if overdue
+        if ($this->deadline && now()->isAfter($this->deadline)) {
+            $this->is_overdue = true;
+            $this->delay_days = now()->diffInDays($this->deadline);
+            $this->delay_reason = $delayReason;
+        } else {
+            $this->is_overdue = false;
+            $this->delay_days = 0;
+            $this->delay_reason = null;
+        }
+        
+        $this->touchActivity();
+        $this->save();
+    }
+
+    /**
+     * Scope: Get overdue projects (not completed yet)
+     */
+    public function scopeOverdue($query)
+    {
+        return $query->where('status', '!=', 'completed')
+                     ->whereNotNull('deadline')
+                     ->where('deadline', '<', now());
+    }
+
+    /**
+     * Scope: Get projects completed on time
+     */
+    public function scopeCompletedOnTime($query)
+    {
+        return $query->where('status', 'completed')
+                     ->where('is_overdue', false);
+    }
+
+    /**
+     * Scope: Get projects completed but late
+     */
+    public function scopeCompletedLate($query)
+    {
+        return $query->where('status', 'completed')
+                     ->where('is_overdue', true);
+    }
+
+    /**
+     * Get delay status badge color
+     */
+    public function getDelayBadgeColor(): string
+    {
+        if (!$this->is_overdue) {
+            return 'green';
+        }
+        
+        if ($this->delay_days <= 3) {
+            return 'yellow';
+        } elseif ($this->delay_days <= 7) {
+            return 'orange';
+        } else {
+            return 'red';
+        }
+    }
+
+    /**
+     * Get formatted delay message
+     */
+    public function getDelayMessage(): string
+    {
+        if (!$this->is_overdue) {
+            return 'Selesai tepat waktu';
+        }
+        
+        return "Terlambat {$this->delay_days} hari";
     }
 }
