@@ -19,17 +19,23 @@ class ProjectLeaderController extends Controller
     }
 
     /**
-     * Show projects where user is assigned as project manager
+     * Show projects where user is assigned as project manager or leader
      */
     public function myProjects()
     {
         $user = Auth::user();
         
-        $projects = Project::whereHas('members', function($query) use ($user) {
-            $query->where('user_id', $user->user_id)
-                  ->whereIn('role', ['project_manager', 'leader']);
+        // Get projects where user is either:
+        // 1. Assigned as leader_id in projects table (direct assignment)
+        // 2. OR listed as project_manager in project_members table
+        $projects = Project::where(function($query) use ($user) {
+            $query->where('leader_id', $user->user_id)
+                  ->orWhereHas('members', function($q) use ($user) {
+                      $q->where('user_id', $user->user_id)
+                        ->where('role', 'project_manager');
+                  });
         })
-        ->with(['members.user', 'creator'])
+        ->with(['members.user', 'creator', 'leader'])
         ->withCount(['members', 'boards', 'cards'])
         ->orderBy('created_at', 'desc')
         ->get();
@@ -209,21 +215,26 @@ class ProjectLeaderController extends Controller
     {
         $user = Auth::user();
         
-        // Verify user is project manager for this project
-        $membership = ProjectMember::where('project_id', $projectId)
+        // Verify user is leader or project manager for this project
+        $project = Project::findOrFail($projectId);
+        
+        $isLeader = $project->leader_id === $user->user_id;
+        $isProjectManager = ProjectMember::where('project_id', $projectId)
             ->where('user_id', $user->user_id)
             ->where('role', 'project_manager')
-            ->first();
+            ->exists();
 
-        if (!$membership && $user->role !== 'admin') {
+        if (!$isLeader && !$isProjectManager && $user->role !== 'admin') {
             abort(403, 'You are not authorized to manage this project.');
         }
 
-        $project = Project::with([
+        // Load project with relationships
+        $project = $project->load([
             'members.user', 
-            'creator', 
+            'creator',
+            'leader',
             'boards.cards.assignments.user'
-        ])->findOrFail($projectId);
+        ]);
 
         // Get project statistics
         $totalTasks = $project->boards->flatMap->cards->count();
@@ -292,17 +303,18 @@ class ProjectLeaderController extends Controller
     {
         $user = Auth::user();
         
-        // Verify user is project manager for this project
-        $membership = ProjectMember::where('project_id', $projectId)
+        // Verify user is leader or project manager for this project
+        $project = Project::with(['members.user', 'creator', 'leader'])->findOrFail($projectId);
+        
+        $isLeader = $project->leader_id === $user->user_id;
+        $isProjectManager = ProjectMember::where('project_id', $projectId)
             ->where('user_id', $user->user_id)
             ->where('role', 'project_manager')
-            ->first();
+            ->exists();
 
-        if (!$membership) {
+        if (!$isLeader && !$isProjectManager) {
             abort(403, 'You are not authorized to manage this project team');
         }
-
-        $project = Project::with(['members.user', 'creator'])->findOrFail($projectId);
         
         // Get available users (excluding admin and current members)
         $currentMemberIds = $project->members->pluck('user_id')->toArray();
