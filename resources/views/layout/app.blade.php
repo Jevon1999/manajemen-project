@@ -239,7 +239,7 @@
     </div>
     
     <!-- Vue.js 3 -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
     
     <!-- AOS JavaScript -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -252,7 +252,7 @@
     </script>
     
     <!-- Real-time Notifications -->
-    <script src="{{ asset('js/notifications.js') }}"></script>
+    {{-- <script src="{{ asset('js/notifications.js') }}"></script> --}}
     
     <!-- Floating Action Button (mobile/tablet) - Optional Quick Action -->
     @if(auth()->user()->role == 'admin' || auth()->user()->role == 'leader')
