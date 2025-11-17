@@ -213,23 +213,49 @@ document.addEventListener('DOMContentLoaded', function() {
         if (leaders.length === 0) {
             results.innerHTML = '<div class="p-3 text-gray-500">Tidak ada leader ditemukan</div>';
         } else {
-            results.innerHTML = leaders.map(leader => `
-                <div class="leader-item p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
+            results.innerHTML = leaders.map(leader => {
+                const hasActiveProject = leader.has_active_project || false;
+                const activeProjectName = leader.active_project_name || '';
+                const isDisabled = hasActiveProject;
+                
+                return `
+                <div class="leader-item p-3 ${isDisabled ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50 cursor-pointer'} border-b border-gray-100 last:border-b-0" 
                      data-leader-id="${leader.user_id}" 
                      data-leader-name="${leader.full_name}"
                      data-leader-username="${leader.username}"
+                     data-disabled="${isDisabled}"
                      data-leader-email="${leader.email}">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                            <span class="text-white text-sm font-medium">${leader.full_name.charAt(0)}</span>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm font-medium">${leader.full_name.charAt(0)}</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">${leader.full_name}</p>
+                                <p class="text-sm text-gray-600">@${leader.username} • ${leader.email}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="font-medium text-gray-900">${leader.full_name}</p>
-                            <p class="text-sm text-gray-600">@${leader.username} • ${leader.email}</p>
-                        </div>
+                        ${isDisabled ? `
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                                Sudah ada project
+                            </span>
+                        ` : `
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                Tersedia
+                            </span>
+                        `}
                     </div>
+                    ${isDisabled && activeProjectName ? `
+                        <p class="text-xs text-red-600 mt-1 ml-11">Project aktif: ${activeProjectName}</p>
+                    ` : ''}
                 </div>
-            `).join('');
+            `}).join('');
         }
         
         dropdown.classList.remove('hidden');
@@ -239,6 +265,12 @@ document.addEventListener('DOMContentLoaded', function() {
     results.addEventListener('click', function(e) {
         const leaderItem = e.target.closest('.leader-item');
         if (!leaderItem) return;
+        
+        // Check if leader is disabled (has active project)
+        if (leaderItem.dataset.disabled === 'true') {
+            alert('Leader ini sudah memiliki 1 project aktif. Pilih leader lain yang tersedia.');
+            return;
+        }
         
         const leaderId = leaderItem.dataset.leaderId;
         const leaderName = leaderItem.dataset.leaderName;

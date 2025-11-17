@@ -122,8 +122,22 @@ class LeaderController extends Controller
             ->where('status', 'active')
             ->limit(10)
             ->get(['user_id', 'full_name', 'username', 'email']);
+        
+        // Add active project info to each leader
+        $leadersWithProjectInfo = $leaders->map(function($leader) {
+            $activeProject = $leader->getActiveProject();
+            
+            return [
+                'user_id' => $leader->user_id,
+                'full_name' => $leader->full_name,
+                'username' => $leader->username,
+                'email' => $leader->email,
+                'has_active_project' => $activeProject !== null,
+                'active_project_name' => $activeProject ? $activeProject->project_name : null,
+            ];
+        });
 
-        return response()->json($leaders);
+        return response()->json($leadersWithProjectInfo);
     }
 
     /**

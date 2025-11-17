@@ -190,13 +190,22 @@ class ProjectController extends Controller
             'leader_id' => [
                 'required',
                 'exists:users,user_id',
-                function ($attribute, $value, $fail) {
+                function ($attribute, $value, $fail) use ($request) {
                     $user = \App\Models\User::find($value);
                     if (!$user || $user->role !== 'leader') {
                         $fail('User yang dipilih harus memiliki role Leader.');
                     }
                     if ($user->status !== 'active') {
                         $fail('Leader harus dalam status aktif.');
+                    }
+                    
+                    // Check if leader already has active project
+                    $newStatus = $request->status ?? 'planning';
+                    if (in_array($newStatus, ['active', 'planning', 'on_hold'])) {
+                        $activeProject = $user->getActiveProject();
+                        if ($activeProject) {
+                            $fail('Leader sudah memiliki 1 project aktif (' . $activeProject->project_name . '). Selesaikan project tersebut terlebih dahulu.');
+                        }
                     }
                 },
             ],
@@ -610,7 +619,21 @@ class ProjectController extends Controller
                     ->ignore($id, 'project_id')
             ],
             'description' => 'nullable|string',
-            'status' => 'nullable|in:planning,active,on_hold,completed,cancelled',
+            'status' => [
+                'nullable',
+                'in:planning,active,on_hold,completed,cancelled',
+                function ($attribute, $value, $fail) use ($project) {
+                    // Check if changing from completed to active status
+                    if ($project->status === 'completed' && in_array($value, ['active', 'planning', 'on_hold'])) {
+                        $activeCount = Project::countLeaderActiveProjects($project->leader_id, $project->project_id);
+                        
+                        if ($activeCount > 0) {
+                            $activeProject = Project::getLeaderActiveProject($project->leader_id);
+                            $fail('Leader sudah memiliki 1 project aktif (' . $activeProject->project_name . '). Tidak bisa mengaktifkan project ini.');
+                        }
+                    }
+                },
+            ],
             'priority' => 'nullable|in:low,medium,high',
             'category' => 'nullable|string|max:50',
             'deadline' => 'nullable|date',

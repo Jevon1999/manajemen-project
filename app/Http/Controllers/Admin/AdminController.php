@@ -40,6 +40,13 @@ class AdminController extends Controller
             ->take(5)
             ->get();
         
+        // Count available leaders (no active projects)
+        $availableLeadersCount = User::where('role', 'leader')
+            ->whereDoesntHave('ledProjects', function($query) {
+                $query->whereIn('status', ['active', 'planning', 'on_hold']);
+            })
+            ->count();
+        
         // Project creation trend (last 6 months)
         $projectTrend = [];
         for ($i = 5; $i >= 0; $i--) {
@@ -68,6 +75,7 @@ class AdminController extends Controller
             'completed_tasks' => $completedTasks,
             'pending_tasks' => Card::whereIn('status', ['todo', 'in_progress'])->count(),
             'completion_rate' => $completionRate,
+            'available_leaders_count' => $availableLeadersCount,
         ];
 
         $recent_users = User::latest()->take(5)->get();

@@ -217,4 +217,43 @@ class User extends Authenticatable
     {
         return $this->notifications()->unread()->count();
     }
+    
+    /**
+     * Check if leader has active project (active, planning, on_hold).
+     * 
+     * @return bool
+     */
+    public function hasActiveProject()
+    {
+        return $this->ledProjects()
+            ->whereIn('status', ['active', 'planning', 'on_hold'])
+            ->exists();
+    }
+    
+    /**
+     * Get leader's active project.
+     * 
+     * @return \App\Models\Project|null
+     */
+    public function getActiveProject()
+    {
+        return $this->ledProjects()
+            ->whereIn('status', ['active', 'planning', 'on_hold'])
+            ->first();
+    }
+    
+    /**
+     * Check if leader can take new project.
+     * Leader can only have 1 active project at a time.
+     * 
+     * @return bool
+     */
+    public function canTakeNewProject()
+    {
+        if ($this->role !== 'leader') {
+            return false;
+        }
+        
+        return !$this->hasActiveProject();
+    }
 }

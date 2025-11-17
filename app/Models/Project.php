@@ -433,4 +433,66 @@ class Project extends Model
         
         return "Terlambat {$this->delay_days} hari";
     }
+    
+    /**
+     * Check if a leader can take a new project.
+     * Leader can only have 1 active project at a time.
+     * 
+     * @param int $leaderId
+     * @return bool
+     */
+    public static function canLeaderTakeNewProject($leaderId)
+    {
+        $activeCount = self::where('leader_id', $leaderId)
+            ->whereIn('status', ['active', 'planning', 'on_hold'])
+            ->count();
+            
+        return $activeCount === 0;
+    }
+    
+    /**
+     * Get leader's active project.
+     * 
+     * @param int $leaderId
+     * @return \App\Models\Project|null
+     */
+    public static function getLeaderActiveProject($leaderId)
+    {
+        return self::where('leader_id', $leaderId)
+            ->whereIn('status', ['active', 'planning', 'on_hold'])
+            ->first();
+    }
+    
+    /**
+     * Count leader's active projects.
+     * 
+     * @param int $leaderId
+     * @param int|null $excludeProjectId Exclude specific project from count
+     * @return int
+     */
+    public static function countLeaderActiveProjects($leaderId, $excludeProjectId = null)
+    {
+        $query = self::where('leader_id', $leaderId)
+            ->whereIn('status', ['active', 'planning', 'on_hold']);
+        
+        if ($excludeProjectId) {
+            $query->where('project_id', '!=', $excludeProjectId);
+        }
+        
+        return $query->count();
+    }
+    
+    /**
+     * Get available leaders (leaders without active projects).
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getAvailableLeaders()
+    {
+        return User::where('role', 'leader')
+            ->whereDoesntHave('ledProjects', function($query) {
+                $query->whereIn('status', ['active', 'planning', 'on_hold']);
+            })
+            ->get();
+    }
 }

@@ -43,11 +43,14 @@
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Total Users</dt>
                             <dd class="text-lg font-medium text-gray-900">{{ number_format($stats['total_users']) }}</dd>
+                            <dd class="mt-1 text-xs text-green-600">
+                                {{ $stats['available_leaders_count'] }} leader tersedia
+                            </dd>
                         </dl>
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
 
         <!-- Total Projects -->
         <a href="{{ route('admin.projects.index') }}" class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow duration-200" data-aos="fade-up" data-aos-delay="200">
