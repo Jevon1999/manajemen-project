@@ -37,9 +37,9 @@
                 @endif
 
                 <!-- Quick Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <!-- My Projects -->
-                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
                         <div class="p-5">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
@@ -56,7 +56,7 @@
                     </div>
 
                     <!-- Total Tasks -->
-                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
                         <div class="p-5">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
@@ -73,7 +73,7 @@
                     </div>
 
                     <!-- Pending Tasks -->
-                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
                         <div class="p-5">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
@@ -90,7 +90,7 @@
                     </div>
 
                     <!-- Completed Tasks -->
-                    <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
                         <div class="p-5">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
@@ -106,6 +106,126 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Completed Projects Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Total Completed -->
+                    <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-flag-checkered text-white text-3xl"></i>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-indigo-100 truncate">Completed Projects</dt>
+                                        <dd class="text-2xl font-bold text-white" x-text="stats.completed_projects"></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- On Time -->
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-double text-white text-3xl"></i>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-green-100 truncate">On Time</dt>
+                                        <dd class="text-2xl font-bold text-white" x-text="stats.completed_on_time"></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Late Completion -->
+                    <div class="bg-gradient-to-br from-red-500 to-red-600 overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-exclamation-circle text-white text-3xl"></i>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-red-100 truncate">Late Completion</dt>
+                                        <dd class="text-2xl font-bold text-white" x-text="stats.completed_late"></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Completed Projects List -->
+                <section class="bg-white shadow rounded-lg mb-8">
+                    <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                        <h3 class="text-lg font-medium text-gray-900 flex items-center">
+                            <i class="fas fa-trophy mr-2 text-yellow-500"></i>
+                            Recently Completed Projects
+                        </h3>
+                        <a href="{{ route('leader.projects.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800">
+                            View All Projects →
+                        </a>
+                    </div>
+                    <div class="p-6">
+                        <template x-if="completedProjects && completedProjects.length > 0">
+                            <div class="space-y-3">
+                                <template x-for="project in completedProjects" :key="project.project_id">
+                                    <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <div class="flex-1">
+                                            <div class="flex items-center space-x-3">
+                                                <h4 class="font-medium text-gray-900" x-text="project.project_name"></h4>
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                                      :class="{
+                                                          'bg-green-100 text-green-800': project.badge_color === 'green',
+                                                          'bg-yellow-100 text-yellow-800': project.badge_color === 'yellow',
+                                                          'bg-red-100 text-red-800': project.badge_color === 'red'
+                                                      }"
+                                                      x-text="project.delay_message">
+                                                </span>
+                                            </div>
+                                            <div class="mt-2 flex items-center space-x-4 text-sm text-gray-500">
+                                                <span>
+                                                    <i class="fas fa-calendar-alt mr-1"></i>
+                                                    Deadline: <span x-text="project.deadline"></span>
+                                                </span>
+                                                <span>
+                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                    Completed: <span x-text="project.completed_at"></span>
+                                                </span>
+                                                <template x-if="project.delay_days > 0">
+                                                    <span class="text-red-600 font-medium">
+                                                        <i class="fas fa-clock mr-1"></i>
+                                                        <span x-text="project.delay_days"></span> days late
+                                                    </span>
+                                                </template>
+                                            </div>
+                                            <template x-if="project.completion_notes">
+                                                <p class="mt-2 text-sm text-gray-600" x-text="project.completion_notes"></p>
+                                            </template>
+                                        </div>
+                                        <a :href="`/leader/projects/${project.project_id}`" 
+                                           class="ml-4 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                            <i class="fas fa-eye mr-2"></i>
+                                            View
+                                        </a>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template x-if="!completedProjects || completedProjects.length === 0">
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-inbox text-4xl mb-3"></i>
+                                <p>No completed projects yet</p>
+                            </div>
+                        </template>
+                    </div>
+                </section>
 
                 <!-- Core Functions Sections -->
                 <div class="space-y-8">
@@ -331,7 +451,10 @@
                     projects: 0,
                     total_tasks: 0,
                     pending_tasks: 0,
-                    completed_tasks: 0
+                    completed_tasks: 0,
+                    completed_projects: 0,
+                    completed_on_time: 0,
+                    completed_late: 0
                 },
                 projects: [],
                 teamMembers: [],
@@ -339,6 +462,7 @@
                 recentTasks: [],
                 projectProgress: [],
                 teamPerformance: [],
+                completedProjects: [],
                 
                 // Assignment
                 assignment: {
@@ -379,6 +503,7 @@
                         this.recentTasks = data.recent_tasks;
                         this.projectProgress = data.project_progress;
                         this.teamPerformance = data.team_performance;
+                        this.completedProjects = data.completed_projects || [];
                     } catch (error) {
                         console.error('Failed to load dashboard data:', error);
                     }

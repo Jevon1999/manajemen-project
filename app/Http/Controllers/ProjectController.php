@@ -75,6 +75,38 @@ class ProjectController extends Controller
             ->count('user_id');
         $highPriorityProjects = Project::where('priority', 'high')->count();
         
+        // Completed projects statistics
+        $completedProjects = Project::where('status', 'completed')->count();
+        $completedOnTime = Project::where('status', 'completed')
+            ->where('is_overdue', false)
+            ->count();
+        $completedLate = Project::where('status', 'completed')
+            ->where('is_overdue', true)
+            ->count();
+        
+        // Get completed projects list with details
+        $completedProjectsList = Project::where('status', 'completed')
+            ->with(['creator', 'leader'])
+            ->withCount('members')
+            ->orderBy('completed_at', 'desc')
+            ->get()
+            ->map(function($project) {
+                return [
+                    'project_id' => $project->project_id,
+                    'project_name' => $project->project_name,
+                    'leader_name' => $project->leader ? $project->leader->full_name : '-',
+                    'deadline' => $project->deadline ? $project->deadline->format('d M Y') : '-',
+                    'completed_at' => $project->completed_at ? $project->completed_at->format('d M Y H:i') : '-',
+                    'is_overdue' => $project->is_overdue,
+                    'delay_days' => $project->delay_days ?? 0,
+                    'delay_message' => $project->getDelayMessage(),
+                    'badge_color' => $project->getDelayBadgeColor(),
+                    'completion_notes' => $project->completion_notes,
+                    'delay_reason' => $project->delay_reason,
+                    'members_count' => $project->members_count
+                ];
+            });
+        
         // Ambil semua kategori jika ada
         $categories = DB::table('projects')
             ->select('category')
@@ -98,6 +130,10 @@ class ProjectController extends Controller
             'activeProjects' => $activeProjects,
             'activeMembers' => $activeMembers,
             'highPriorityProjects' => $highPriorityProjects,
+            'completedProjects' => $completedProjects,
+            'completedOnTime' => $completedOnTime,
+            'completedLate' => $completedLate,
+            'completedProjectsList' => $completedProjectsList,
             'categories' => $categories,
             'leaders' => $leaders,
         ]);

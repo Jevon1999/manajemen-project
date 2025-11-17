@@ -61,6 +61,9 @@ class LeaderDashboardController extends Controller
         // Get team performance
         $teamPerformance = $this->getTeamPerformance($projects);
 
+        // Get completed projects with details
+        $completedProjects = $this->getCompletedProjects($projects);
+
         return response()->json([
             'stats' => $stats,
             'projects' => $projects->map(function($project) {
@@ -73,7 +76,8 @@ class LeaderDashboardController extends Controller
             'tasks' => $tasks,
             'recent_tasks' => $recentTasks,
             'project_progress' => $projectProgress,
-            'team_performance' => $teamPerformance
+            'team_performance' => $teamPerformance,
+            'completed_projects' => $completedProjects
         ]);
     }
 
@@ -250,6 +254,12 @@ class LeaderDashboardController extends Controller
         $totalTasks = 0;
         $completedTasks = 0;
         $pendingTasks = 0;
+        
+        // Completed projects statistics
+        $completedProjects = $projects->where('status', 'completed');
+        $totalCompletedProjects = $completedProjects->count();
+        $completedOnTime = $completedProjects->where('is_overdue', false)->count();
+        $completedLate = $completedProjects->where('is_overdue', true)->count();
 
         foreach ($projects as $project) {
             foreach ($project->boards as $board) {
@@ -263,7 +273,10 @@ class LeaderDashboardController extends Controller
             'projects' => $projects->count(),
             'total_tasks' => $totalTasks,
             'completed_tasks' => $completedTasks,
-            'pending_tasks' => $pendingTasks
+            'pending_tasks' => $pendingTasks,
+            'completed_projects' => $totalCompletedProjects,
+            'completed_on_time' => $completedOnTime,
+            'completed_late' => $completedLate
         ];
     }
 
@@ -408,5 +421,28 @@ class LeaderDashboardController extends Controller
         }
 
         return $performance;
+    }
+
+    /**
+     * Get completed projects with details
+     */
+    private function getCompletedProjects($projects)
+    {
+        return $projects->where('status', 'completed')
+            ->sortByDesc('completed_at')
+            ->take(10)
+            ->map(function($project) {
+                return [
+                    'project_id' => $project->project_id,
+                    'project_name' => $project->project_name,
+                    'deadline' => $project->deadline ? $project->deadline->format('d M Y') : '-',
+                    'completed_at' => $project->completed_at ? $project->completed_at->format('d M Y') : '-',
+                    'is_overdue' => $project->is_overdue,
+                    'delay_days' => $project->delay_days ?? 0,
+                    'delay_message' => $project->getDelayMessage(),
+                    'badge_color' => $project->getDelayBadgeColor(),
+                    'completion_notes' => $project->completion_notes
+                ];
+            })->values();
     }
 }

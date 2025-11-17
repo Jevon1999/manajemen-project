@@ -101,8 +101,68 @@
         </div>
     </div>
 
+    <!-- Completed Projects Statistics -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3" data-aos="fade-up">
+        <!-- Total Completed -->
+        <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-flag-checkered text-white text-3xl"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-indigo-100 truncate">Completed Projects</dt>
+                            <dd class="mt-1 text-3xl font-bold text-white">
+                                {{ $completedProjects ?? 0 }}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- On Time -->
+        <div class="bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-check-double text-white text-3xl"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-green-100 truncate">Completed On Time</dt>
+                            <dd class="mt-1 text-3xl font-bold text-white">
+                                {{ $completedOnTime ?? 0 }}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Late -->
+        <div class="bg-gradient-to-br from-red-500 to-red-600 overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-white text-3xl"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-red-100 truncate">Late Completion</dt>
+                            <dd class="mt-1 text-3xl font-bold text-white">
+                                {{ $completedLate ?? 0 }}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Container Table -->
-    <div class="bg-white shadow overflow-hidden sm:rounded-lg" data-aos="fade-up">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg" data-aos="fade-up" x-data="{ activeTab: 'all' }">
         <!-- Header & Button -->
         <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -121,10 +181,34 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Tabs Navigation -->
+            <div class="mt-6 border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8">
+                    <button @click="activeTab = 'all'" 
+                            :class="activeTab === 'all' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                        <i class="fas fa-th mr-2"></i>
+                        All Projects
+                    </button>
+                    <button @click="activeTab = 'active'" 
+                            :class="activeTab === 'active' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                        <i class="fas fa-play-circle mr-2"></i>
+                        Active
+                    </button>
+                    <button @click="activeTab = 'completed'" 
+                            :class="activeTab === 'completed' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Completed ({{ $completedProjects }})
+                    </button>
+                </nav>
+            </div>
         </div>
 
-        <!-- Filter Section -->
-        <div class="px-4 py-4 bg-gray-50 border-b border-gray-200 sm:px-6">
+        <!-- Filter Section (Only for All/Active tabs) -->
+        <div class="px-4 py-4 bg-gray-50 border-b border-gray-200 sm:px-6" x-show="activeTab !== 'completed'">
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <!-- Search -->
                 <div class="lg:col-span-1">
@@ -176,8 +260,81 @@
             </div>
         </div>
 
-        <!-- Project Cards Grid -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+        <!-- Completed Projects Table -->
+        <div x-show="activeTab === 'completed'" class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Leader</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deadline</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Completed</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse($completedProjectsList ?? [] as $project)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $project['project_name'] }}</div>
+                                    <div class="text-sm text-gray-500">{{ $project['members_count'] }} members</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ $project['leader_name'] }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ $project['deadline'] }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ $project['completed_at'] }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                @if($project['badge_color'] === 'green') bg-green-100 text-green-800
+                                @elseif($project['badge_color'] === 'yellow') bg-yellow-100 text-yellow-800
+                                @else bg-red-100 text-red-800
+                                @endif">
+                                {{ $project['delay_message'] }}
+                            </span>
+                            @if($project['delay_days'] > 0)
+                                <div class="text-xs text-red-600 mt-1">{{ $project['delay_days'] }} days late</div>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500 max-w-xs">
+                            <div class="truncate" title="{{ $project['completion_notes'] }}">
+                                {{ $project['completion_notes'] ?? '-' }}
+                            </div>
+                            @if($project['delay_reason'])
+                                <div class="text-xs text-red-600 mt-1 italic">Reason: {{ Str::limit($project['delay_reason'], 50) }}</div>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="{{ route('admin.projects.show', $project['project_id']) }}" 
+                               class="text-blue-600 hover:text-blue-900 mr-3">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                            <i class="fas fa-inbox text-4xl mb-3 block"></i>
+                            No completed projects yet
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Project Cards Grid (All/Active tabs) -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4" x-show="activeTab !== 'completed'">
             @forelse($projects ?? [] as $project)
             @php
                 $statusConfig = [
@@ -200,7 +357,9 @@
             @endphp
             
             <!-- Project Card -->
-            <div class="bg-white rounded-xl shadow hover:shadow-2xl transition-all duration-500 ease-in-out hover:-translate-y-3 hover:scale-[1.02] overflow-hidden border border-gray-100 group ml-3 mr-1 my-1">
+            <div class="bg-white rounded-xl shadow hover:shadow-2xl transition-all duration-500 ease-in-out hover:-translate-y-3 hover:scale-[1.02] overflow-hidden border border-gray-100 group ml-3 mr-1 my-1"
+                 x-show="activeTab === 'all' || (activeTab === 'active' && '{{ $status }}' === 'active')"
+                 x-transition>
                 <!-- Card Header with Gradient -->
                 <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-3 relative overflow-hidden transition-all duration-500">
                     
