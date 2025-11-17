@@ -193,8 +193,14 @@ Route::middleware(['auth'])->group(function () {
         
         // === REPORTS & ANALYTICS ===
         Route::prefix('reports')->name('reports.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\ReportController::class, 'index'])->name('index');
+            Route::get('/', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('index');
             Route::post('/generate', [\App\Http\Controllers\ReportController::class, 'generate'])->name('generate');
+            
+            // Excel Export Routes
+            Route::get('/export/projects', [\App\Http\Controllers\Admin\ReportController::class, 'exportProjects'])->name('export.projects');
+            Route::get('/export/tasks', [\App\Http\Controllers\Admin\ReportController::class, 'exportTasks'])->name('export.tasks');
+            Route::get('/export/users', [\App\Http\Controllers\Admin\ReportController::class, 'exportUsers'])->name('export.users');
+            Route::get('/export/comprehensive', [\App\Http\Controllers\Admin\ReportController::class, 'exportComprehensive'])->name('export.comprehensive');
             
             // Old analytics routes (if needed)
             Route::get('/analytics', [ReportsController::class, 'index'])->name('analytics');
