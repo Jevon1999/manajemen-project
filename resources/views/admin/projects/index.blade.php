@@ -207,59 +207,6 @@
             </div>
         </div>
 
-        <!-- Filter Section (Only for All/Active tabs) -->
-        <div class="px-4 py-4 bg-gray-50 border-b border-gray-200 sm:px-6" x-show="activeTab !== 'completed'">
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <!-- Search -->
-                <div class="lg:col-span-1">
-                    <label for="search" class="sr-only">Cari</label>
-                    <div class="relative rounded-md shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
-                        </div>
-                        <input type="text" name="search" id="search" class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md" placeholder="Cari proyek...">
-                    </div>
-                </div>
-
-                <!-- Status Filter -->
-                <div>
-                    <label for="status" class="sr-only">Status</label>
-                    <select id="status" name="status" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-                        <option value="">Semua Status</option>
-                        <option value="planning">Planning</option>
-                        <option value="active">Aktif</option>
-                        <option value="on_hold">Ditunda</option>
-                        <option value="completed">Selesai</option>
-                        <option value="cancelled">Dibatalkan</option>
-                    </select>
-                </div>
-
-                <!-- Category Filter -->
-                <div>
-                    <label for="category" class="sr-only">Kategori</label>
-                    <select id="category" name="category" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-                        <option value="">Semua Kategori</option>
-                        @foreach($categories ?? [] as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Priority Filter -->
-                <div>
-                    <label for="priority" class="sr-only">Prioritas</label>
-                    <select id="priority" name="priority" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-                        <option value="">Semua Prioritas</option>
-                        <option value="low">Rendah</option>
-                        <option value="medium">Sedang</option>
-                        <option value="high">Tinggi</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
         <!-- Completed Projects Table -->
         <div x-show="activeTab === 'completed'" class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">

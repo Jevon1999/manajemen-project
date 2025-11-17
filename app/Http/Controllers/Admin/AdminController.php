@@ -22,13 +22,18 @@ class AdminController extends Controller
      */
     public function dashboard()
     {
+        $totalTasks = Card::count();
+        $completedTasks = Card::where('status', 'done')->count();
+        $completionRate = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100, 1) : 0;
+        
         $stats = [
             'total_users' => User::count(),
             'total_projects' => Project::count(),
             'active_projects' => Project::where('status', 'active')->count(),
-            'total_tasks' => Card::count(),
-            'completed_tasks' => Card::where('status', 'completed')->count(),
+            'total_tasks' => $totalTasks,
+            'completed_tasks' => $completedTasks,
             'pending_tasks' => Card::whereIn('status', ['todo', 'in_progress'])->count(),
+            'completion_rate' => $completionRate,
         ];
 
         $recent_users = User::latest()->take(5)->get();
