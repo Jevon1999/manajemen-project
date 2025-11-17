@@ -162,7 +162,7 @@
     <!-- Recent Activity -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Recent Users -->
-        <div class="bg-white shadow rounded-lg" data-aos="fade-up" data-aos-delay="500">
+        <div class="bg-white shadow rounded-lg" data-aos="fade-up" data-aos-delay="800">
             <div class="px-4 py-5 sm:p-6">
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Recent Users</h3>
                 <div class="flow-root">
@@ -205,7 +205,7 @@
         </div>
 
         <!-- Recent Projects -->
-        <div class="bg-white shadow rounded-lg" data-aos="fade-up" data-aos-delay="600">
+        <div class="bg-white shadow rounded-lg" data-aos="fade-up" data-aos-delay="900">
             <div class="px-4 py-5 sm:p-6">
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Recent Projects</h3>
                 <div class="flow-root">
@@ -250,7 +250,7 @@
     </div>
 
     <!-- Quick Actions -->
-    <div class="bg-white shadow rounded-lg" data-aos="fade-up" data-aos-delay="700">
+    <div class="bg-white shadow rounded-lg" data-aos="fade-up" data-aos-delay="1000">
         <div class="px-4 py-5 sm:p-6">
             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Quick Actions</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
