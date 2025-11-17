@@ -9,9 +9,12 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
-class UsersExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths, WithTitle
+class UsersExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths, WithTitle, ShouldAutoSize
 {
     protected $role;
 
@@ -40,13 +43,15 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping, WithStyl
     public function headings(): array
     {
         return [
-            'User ID',
+            'ID',
             'Full Name',
             'Username',
             'Email',
             'Role',
+            'Phone',
             'Status',
             'Registered At',
+            'Last Login',
         ];
     }
 
@@ -60,9 +65,11 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping, WithStyl
             $user->full_name,
             $user->username,
             $user->email,
-            ucfirst($user->role),
-            $user->is_active ? 'Active' : 'Inactive',
-            $user->created_at->format('d M Y H:i'),
+            strtoupper($user->role),
+            $user->phone ?? '-',
+            $user->is_active ? 'ACTIVE' : 'INACTIVE',
+            $user->created_at->format('Y-m-d H:i:s'),
+            $user->last_login_at ? $user->last_login_at->format('Y-m-d H:i:s') : 'Never',
         ];
     }
 
@@ -73,10 +80,17 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping, WithStyl
     {
         return [
             1 => [
-                'font' => ['bold' => true, 'size' => 12, 'color' => ['rgb' => 'FFFFFF']],
+                'font' => [
+                    'bold' => true, 
+                    'size' => 12,
+                    'color' => ['rgb' => 'FFFFFF']
+                ],
                 'fill' => [
-                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'fillType' => Fill::FILL_SOLID,
                     'startColor' => ['rgb' => '3B82F6']
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ],
             ],
         ];
@@ -88,13 +102,15 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping, WithStyl
     public function columnWidths(): array
     {
         return [
-            'A' => 10,  // User ID
+            'A' => 8,   // ID
             'B' => 25,  // Full Name
-            'C' => 20,  // Username
-            'D' => 30,  // Email
+            'C' => 18,  // Username
+            'D' => 32,  // Email
             'E' => 12,  // Role
-            'F' => 12,  // Status
-            'G' => 18,  // Registered At
+            'F' => 18,  // Phone
+            'G' => 12,  // Status
+            'H' => 20,  // Registered At
+            'I' => 20,  // Last Login
         ];
     }
 

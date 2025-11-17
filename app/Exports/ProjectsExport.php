@@ -9,9 +9,12 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
-class ProjectsExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths, WithTitle
+class ProjectsExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths, WithTitle, ShouldAutoSize
 {
     protected $status;
 
@@ -40,19 +43,21 @@ class ProjectsExport implements FromCollection, WithHeadings, WithMapping, WithS
     public function headings(): array
     {
         return [
-            'Project ID',
+            'ID',
             'Project Name',
             'Description',
             'Status',
             'Priority',
             'Category',
             'Leader',
-            'Team Members',
+            'Leader Email',
+            'Team Size',
+            'Start Date',
             'Deadline',
             'Completed At',
-            'Is Overdue',
+            'On Time?',
             'Delay Days',
-            'Budget',
+            'Budget (IDR)',
             'Created At',
         ];
     }
@@ -65,18 +70,20 @@ class ProjectsExport implements FromCollection, WithHeadings, WithMapping, WithS
         return [
             $project->project_id,
             $project->project_name,
-            $project->description ?? '-',
-            ucfirst($project->status),
-            ucfirst($project->priority ?? 'medium'),
+            strip_tags($project->description ?? '-'),
+            strtoupper($project->status),
+            strtoupper($project->priority ?? 'MEDIUM'),
             $project->category ?? '-',
             $project->leader ? $project->leader->full_name : 'No Leader',
-            $project->members->count() . ' members',
-            $project->deadline ? $project->deadline->format('d M Y') : '-',
-            $project->completed_at ? $project->completed_at->format('d M Y H:i') : '-',
-            $project->is_overdue ? 'Yes' : 'No',
+            $project->leader ? $project->leader->email : '-',
+            $project->members->count(),
+            $project->created_at->format('Y-m-d'),
+            $project->deadline ? $project->deadline->format('Y-m-d') : '-',
+            $project->completed_at ? $project->completed_at->format('Y-m-d H:i:s') : '-',
+            $project->is_overdue ? 'LATE' : ($project->completed_at ? 'ON TIME' : '-'),
             $project->delay_days ?? 0,
-            $project->budget ? 'Rp ' . number_format($project->budget, 0, ',', '.') : '-',
-            $project->created_at->format('d M Y H:i'),
+            $project->budget ? number_format($project->budget, 0, ',', '.') : '-',
+            $project->created_at->format('Y-m-d H:i:s'),
         ];
     }
 
@@ -88,10 +95,18 @@ class ProjectsExport implements FromCollection, WithHeadings, WithMapping, WithS
         return [
             // Style for header row
             1 => [
-                'font' => ['bold' => true, 'size' => 12, 'color' => ['rgb' => 'FFFFFF']],
+                'font' => [
+                    'bold' => true, 
+                    'size' => 12,
+                    'color' => ['rgb' => 'FFFFFF']
+                ],
                 'fill' => [
-                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'fillType' => Fill::FILL_SOLID,
                     'startColor' => ['rgb' => '4F46E5']
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
                 ],
             ],
         ];
@@ -103,20 +118,22 @@ class ProjectsExport implements FromCollection, WithHeadings, WithMapping, WithS
     public function columnWidths(): array
     {
         return [
-            'A' => 12,  // Project ID
+            'A' => 8,   // ID
             'B' => 30,  // Project Name
-            'C' => 40,  // Description
+            'C' => 45,  // Description
             'D' => 12,  // Status
             'E' => 12,  // Priority
-            'F' => 15,  // Category
-            'G' => 20,  // Leader
-            'H' => 15,  // Team Members
-            'I' => 15,  // Deadline
-            'J' => 18,  // Completed At
-            'K' => 12,  // Is Overdue
-            'L' => 12,  // Delay Days
-            'M' => 18,  // Budget
-            'N' => 18,  // Created At
+            'F' => 18,  // Category
+            'G' => 22,  // Leader
+            'H' => 28,  // Leader Email
+            'I' => 12,  // Team Size
+            'J' => 14,  // Start Date
+            'K' => 14,  // Deadline
+            'L' => 20,  // Completed At
+            'M' => 12,  // On Time?
+            'N' => 12,  // Delay Days
+            'O' => 18,  // Budget
+            'P' => 20,  // Created At
         ];
     }
 

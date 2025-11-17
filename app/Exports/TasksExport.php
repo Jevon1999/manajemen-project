@@ -9,9 +9,12 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
-class TasksExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths, WithTitle
+class TasksExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths, WithTitle, ShouldAutoSize
 {
     protected $projectId;
     protected $status;
@@ -46,16 +49,17 @@ class TasksExport implements FromCollection, WithHeadings, WithMapping, WithStyl
     public function headings(): array
     {
         return [
-            'Task ID',
+            'ID',
             'Project',
             'Task Title',
             'Description',
             'Status',
             'Priority',
             'Assigned To',
+            'Assignee Email',
             'Deadline',
             'Completed At',
-            'Is Overdue',
+            'Is Overdue?',
             'Created At',
         ];
     }
@@ -65,18 +69,23 @@ class TasksExport implements FromCollection, WithHeadings, WithMapping, WithStyl
      */
     public function map($task): array
     {
+        $isOverdue = $task->deadline 
+            && now() > $task->deadline 
+            && $task->status !== 'done';
+
         return [
             $task->card_id,
-            $task->project ? $task->project->project_name : '-',
+            $task->project ? $task->project->project_name : 'N/A',
             $task->title,
-            $task->description ?? '-',
-            ucfirst($task->status),
-            ucfirst($task->priority ?? 'medium'),
+            strip_tags($task->description ?? '-'),
+            strtoupper($task->status),
+            strtoupper($task->priority ?? 'MEDIUM'),
             $task->assignedUser ? $task->assignedUser->full_name : 'Unassigned',
-            $task->deadline ? $task->deadline->format('d M Y') : '-',
-            $task->completed_at ? $task->completed_at->format('d M Y H:i') : '-',
-            ($task->deadline && now() > $task->deadline && $task->status !== 'done') ? 'Yes' : 'No',
-            $task->created_at->format('d M Y H:i'),
+            $task->assignedUser ? $task->assignedUser->email : '-',
+            $task->deadline ? $task->deadline->format('Y-m-d') : '-',
+            $task->completed_at ? $task->completed_at->format('Y-m-d H:i:s') : '-',
+            $isOverdue ? 'YES' : 'NO',
+            $task->created_at->format('Y-m-d H:i:s'),
         ];
     }
 
@@ -87,10 +96,17 @@ class TasksExport implements FromCollection, WithHeadings, WithMapping, WithStyl
     {
         return [
             1 => [
-                'font' => ['bold' => true, 'size' => 12, 'color' => ['rgb' => 'FFFFFF']],
+                'font' => [
+                    'bold' => true, 
+                    'size' => 12,
+                    'color' => ['rgb' => 'FFFFFF']
+                ],
                 'fill' => [
-                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'fillType' => Fill::FILL_SOLID,
                     'startColor' => ['rgb' => '10B981']
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ],
             ],
         ];
@@ -102,17 +118,18 @@ class TasksExport implements FromCollection, WithHeadings, WithMapping, WithStyl
     public function columnWidths(): array
     {
         return [
-            'A' => 10,  // Task ID
-            'B' => 25,  // Project
-            'C' => 30,  // Task Title
-            'D' => 35,  // Description
+            'A' => 8,   // ID
+            'B' => 28,  // Project
+            'C' => 32,  // Task Title
+            'D' => 40,  // Description
             'E' => 12,  // Status
             'F' => 12,  // Priority
-            'G' => 20,  // Assigned To
-            'H' => 15,  // Deadline
-            'I' => 18,  // Completed At
-            'J' => 12,  // Is Overdue
-            'K' => 18,  // Created At
+            'G' => 22,  // Assigned To
+            'H' => 28,  // Assignee Email
+            'I' => 14,  // Deadline
+            'J' => 20,  // Completed At
+            'K' => 12,  // Is Overdue
+            'L' => 20,  // Created At
         ];
     }
 
