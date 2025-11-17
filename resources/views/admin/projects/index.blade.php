@@ -220,7 +220,10 @@
         </div>
 
         <!-- Completed Projects Table -->
-        <div x-show="activeTab === 'completed'" class="overflow-x-auto">
+        <div x-show="activeTab === 'completed'" 
+             x-transition
+             class="overflow-x-auto bg-white rounded-lg shadow"
+             style="display: none;">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
@@ -293,7 +296,9 @@
         </div>
 
         <!-- Project Cards Grid (All/Active tabs) -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4" x-show="activeTab !== 'completed'">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4" 
+             x-show="activeTab !== 'completed'"
+             x-transition>
             @forelse($projects ?? [] as $project)
             @php
                 $statusConfig = [
@@ -317,8 +322,9 @@
             
             <!-- Project Card -->
             <div class="bg-white rounded-xl shadow hover:shadow-2xl transition-all duration-500 ease-in-out hover:-translate-y-3 hover:scale-[1.02] overflow-hidden border border-gray-100 group ml-3 mr-1 my-1"
-                 x-show="activeTab === 'all' || (activeTab === 'active' && '{{ $status }}' === 'active')"
-                 x-transition>
+                 x-show="activeTab === 'all' || (activeTab === 'active' && '{{ $project->status }}' === 'active')"
+                 x-transition
+                 style="display: none;">
                 <!-- Card Header with Gradient -->
                 <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-4 py-3 relative overflow-hidden transition-all duration-500">
                     
@@ -1007,6 +1013,23 @@ document.addEventListener('DOMContentLoaded', function() {
     if (urlParams.has('status')) statusFilter.value = urlParams.get('status');
     if (urlParams.has('category')) categoryFilter.value = urlParams.get('category');
     if (urlParams.has('priority')) priorityFilter.value = urlParams.get('priority');
+});
+
+// Alpine.js - Force show cards on initial load based on activeTab
+document.addEventListener('alpine:init', () => {
+    Alpine.data('projectApp', () => ({
+        activeTab: 'all',
+        init() {
+            // Show all cards initially
+            this.$nextTick(() => {
+                this.updateVisibility();
+            });
+        },
+        updateVisibility() {
+            // Force re-evaluation of x-show
+            this.activeTab = this.activeTab;
+        }
+    }));
 });
 </script>
 @endpush
