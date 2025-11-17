@@ -622,16 +622,9 @@
                         class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all">
                     Batal
                 </button>
-                <button type="submit" :disabled="loading"
-                        class="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 border border-transparent rounded-lg hover:from-blue-700 hover:to-blue-800 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span v-if="!loading">Buat Proyek</span>
-                    <span v-else class="flex items-center">
-                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Membuat...
-                    </span>
+                <button type="submit"
+                        class="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 border border-transparent rounded-lg hover:from-blue-700 hover:to-blue-800 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                    Buat Proyek
                 </button>
             </div>
         </form>
@@ -644,25 +637,6 @@
 
 @push('scripts')
 <style>
-/* Prevent flashing of uncompiled Vue templates */
-[v-cloak] {
-    display: none !important;
-}
-
-/* Vue Modal Transitions */
-.modal-enter-active, .modal-leave-active {
-    transition: opacity 0.3s ease;
-}
-.modal-enter-from, .modal-leave-to {
-    opacity: 0;
-}
-.modal-enter-active > div, .modal-leave-active > div {
-    transition: transform 0.3s ease;
-}
-.modal-enter-from > div, .modal-leave-to > div {
-    transform: scale(0.95) translateY(-20px);
-}
-
 /* Project Card Animations */
 .group:hover {
     transform: translateY(-2px);
@@ -778,198 +752,50 @@ input[type="checkbox"]:checked {
 </style>
 
 <script>
-console.log('Vue available?', typeof Vue !== 'undefined');
-
-if (typeof Vue !== 'undefined') {
-    const { createApp } = Vue;
-
-    const app = createApp({
-        data() {
-            return {
-                showCreateModal: false,
-                loading: false,
-                createForm: {
-                    project_name: '',
-                    description: '',
-                    leader_id: '',
-                    status: 'planning',
-                    priority: 'medium',
-                    category: '',
-                    end_date: '',
-                    budget: ''
-                }
-            }
-        },
-    methods: {
-        openCreateModal() {
-            this.showCreateModal = true;
-            document.body.style.overflow = 'hidden';
-        },
-        closeCreateModal() {
-            this.showCreateModal = false;
-            document.body.style.overflow = 'auto';
-            this.resetCreateForm();
-        },
-        createProject() {
-            this.loading = true;
-            const formData = new FormData();
-            Object.keys(this.createForm).forEach(key => {
-                if (this.createForm[key]) {
-                    formData.append(key, this.createForm[key]);
-                }
-            });
-
-            fetch('/admin/projects', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                this.loading = false;
-                if (data.success) {
-                    this.closeCreateModal();
-                    this.showNotification(data.message || 'Proyek berhasil dibuat!', 'success');
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    this.showNotification(data.message || 'Gagal membuat proyek', 'error');
-                }
-            })
-            .catch(error => {
-                this.loading = false;
-                console.error('Error:', error);
-                this.showNotification('Terjadi kesalahan saat membuat proyek', 'error');
-            });
-        },
-        deleteProject(projectId) {
-            if (!confirm('Apakah Anda yakin ingin menghapus proyek ini? Tindakan ini tidak dapat dibatalkan.')) {
-                return;
-            }
-            
-            fetch(`/admin/projects/${projectId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message && data.message.includes('berhasil')) {
-                    this.showNotification(data.message, 'success');
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    this.showNotification('Gagal menghapus proyek: ' + (data.message || 'Unknown error'), 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                this.showNotification('Terjadi kesalahan saat menghapus proyek', 'error');
-            });
-        },
-        resetCreateForm() {
-            this.createForm = {
-                project_name: '',
-                description: '',
-                status: 'planning',
-                priority: 'medium',
-                category: '',
-                end_date: '',
-                budget: ''
-            };
-        },
-        formatDeadline(date) {
-            if (!date) return '';
-            const deadline = new Date(date);
-            const now = new Date();
-            const diffTime = deadline - now;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays < 0) return `Terlewat ${Math.abs(diffDays)} hari`;
-            if (diffDays === 0) return 'Hari ini';
-            if (diffDays === 1) return 'Besok';
-            if (diffDays <= 7) return `${diffDays} hari lagi`;
-            if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} minggu lagi`;
-            return `${Math.ceil(diffDays / 30)} bulan lagi`;
-        },
-        isDeadlineClose(date) {
-            if (!date) return false;
-            const deadline = new Date(date);
-            const now = new Date();
-            const diffDays = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
-            return diffDays >= 0 && diffDays <= 7; // Warning if within 7 days
-        },
-        formatCurrency(amount) {
-            if (!amount) return 'Rp 0';
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
-            }).format(amount);
-        },
-
-        formatDateTime(datetime) {
-            if (!datetime) return '-';
-            const date = new Date(datetime);
-            return date.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        },
-        showNotification(message, type = 'success') {
-            const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce`;
-            notification.innerHTML = `
-                <div class="flex items-center space-x-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12'}"/>
-                    </svg>
-                    <span class="font-medium">${message}</span>
-                </div>
-            `;
-            document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 3000);
-        }
-    },
-    mounted() {
-        console.log('Vue app mounted hook called');
-        // Make methods available globally for onclick handlers
-        window.openCreateModal = () => this.openCreateModal();
-        window.deleteProject = (id) => this.deleteProject(id);
-        
-        console.log('Global functions registered:', {
-            openCreateModal: typeof window.openCreateModal,
-            deleteProject: typeof window.deleteProject
-        });
-        
-        // Ensure modal is closed on mount
-        this.showCreateModal = false;
-        console.log('Initial modal state:', {
-            showCreateModal: this.showCreateModal
-        });
-        
-        // ESC key handler for closing modal
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.showCreateModal) {
-                this.closeCreateModal();
-            }
-        });
+// Delete Project Function
+function deleteProject(projectId) {
+    if (!confirm('Apakah Anda yakin ingin menghapus proyek ini? Tindakan ini tidak dapat dibatalkan.')) {
+        return;
     }
+    
+    fetch(`/admin/projects/${projectId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message && data.message.includes('berhasil')) {
+            showNotification(data.message, 'success');
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            showNotification('Gagal menghapus proyek: ' + (data.message || 'Unknown error'), 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Terjadi kesalahan saat menghapus proyek', 'error');
     });
+}
 
-    console.log('Mounting Vue app to #projectApp');
-    app.mount('#projectApp');
-    console.log('Vue app mounted successfully');
-} else {
-    console.error('Vue is not loaded! Check if Vue CDN is included in layout.');
+// Show Notification Function
+function showNotification(message, type = 'success') {
+    const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce`;
+    notification.innerHTML = `
+        <div class="flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12'}"/>
+            </svg>
+            <span class="font-medium">${message}</span>
+        </div>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
 }
 
 // Live Filter - Keep this for filtering functionality
