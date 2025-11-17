@@ -675,13 +675,18 @@ class ProjectLeaderController extends Controller
             
             $pendingTasks = $totalTasks - $completedTasks;
             
+            // Allow completion even without tasks (project might be cancelled or no tasks needed)
+            // Just log a warning if no tasks exist
             if ($totalTasks === 0) {
-                DB::rollBack();
-                return redirect()->back()->with('error', 'Cannot complete project: No tasks found in this project.');
+                Log::warning("Project being completed without any tasks", [
+                    'project_id' => $project->project_id,
+                    'project_name' => $project->project_name,
+                    'leader_id' => $user->user_id
+                ]);
             }
             
-            // Check pending tasks unless force_complete is true
-            if ($pendingTasks > 0 && !($validated['force_complete'] ?? false)) {
+            // Check pending tasks only if tasks exist and force_complete is not true
+            if ($totalTasks > 0 && $pendingTasks > 0 && !($validated['force_complete'] ?? false)) {
                 DB::rollBack();
                 return redirect()->back()->with('error', "Cannot complete project: {$pendingTasks} task(s) still pending. All tasks must be marked as 'Done' first.");
             }
