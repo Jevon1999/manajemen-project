@@ -67,13 +67,31 @@
                     </a>
                     
                     @if(Auth::user()->user_id === $project->leader_id && Auth::user()->role === 'leader')
-                    <button onclick="openAddMemberModal()" 
-                            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow-sm text-sm font-medium">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Tambah Anggota
-                    </button>
+                        @if($project->status !== 'completed')
+                        <button onclick="markProjectComplete()" 
+                                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Tandai Selesai
+                        </button>
+                        @else
+                        <button onclick="reopenProject()" 
+                                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            Buka Kembali
+                        </button>
+                        @endif
+                        
+                        <button onclick="openAddMemberModal()" 
+                                class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow-sm text-sm font-medium">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Tambah Anggota
+                        </button>
                     @endif
                 </div>
             </div>
@@ -948,6 +966,133 @@ function rejectQuickRequest(requestId, taskTitle) {
     .catch(error => {
         console.error('Error:', error);
         showMessage('❌ Error rejecting request', 'error');
+    });
+}
+
+// Mark project as complete
+function markProjectComplete() {
+    @php
+        $deadline = $project->deadline ? \Carbon\Carbon::parse($project->deadline) : null;
+        $isOverdue = $deadline && now()->greaterThan($deadline);
+        $delayDays = $isOverdue ? now()->diffInDays($deadline) : 0;
+    @endphp
+    
+    const isOverdue = {{ $isOverdue ? 'true' : 'false' }};
+    const delayDays = {{ $delayDays }};
+    
+    let modalHtml = `
+        <div id="complete-modal" class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                ${isOverdue ? `
+                <div class="mb-4 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-yellow-800">⚠️ Project Terlambat</h3>
+                            <div class="mt-2 text-sm text-yellow-700">
+                                <p>Deadline: {{ $project->deadline ? $project->deadline->format('d M Y') : '-' }}</p>
+                                <p>Hari ini: {{ now()->format('d M Y') }}</p>
+                                <p class="font-semibold mt-1">Terlambat: ${delayDays} hari</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        ${isOverdue ? '⚠️ Selesaikan Project (Terlambat)' : '✅ Selesaikan Project'}
+                    </h3>
+                    <button onclick="closeCompleteModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <form id="complete-form" method="POST" action="{{ route('leader.projects.complete', $project->project_id) }}">
+                    @csrf
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Catatan Penyelesaian
+                        </label>
+                        <textarea name="completion_notes" 
+                                  rows="3" 
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                  placeholder="Tambahkan catatan mengenai penyelesaian project..."></textarea>
+                        <p class="mt-1 text-xs text-gray-500">Optional - dokumentasi hasil project</p>
+                    </div>
+                    
+                    ${isOverdue ? `
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Alasan Keterlambatan <span class="text-red-500">*</span>
+                        </label>
+                        <textarea name="delay_reason" 
+                                  rows="3" 
+                                  required
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                                  placeholder="Jelaskan alasan project terlambat diselesaikan..."></textarea>
+                        <p class="mt-1 text-xs text-gray-500">Wajib diisi untuk project yang terlambat</p>
+                    </div>
+                    ` : ''}
+                    
+                    <input type="hidden" name="is_overdue" value="${isOverdue ? '1' : '0'}">
+                    
+                    <div class="flex space-x-3 mt-6">
+                        <button type="button" 
+                                onclick="closeCompleteModal()"
+                                class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                            Batal
+                        </button>
+                        <button type="submit"
+                                class="flex-1 px-4 py-2 text-white rounded-lg transition-colors ${isOverdue ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-green-600 hover:bg-green-700'}">
+                            ${isOverdue ? '⚠️ Selesaikan' : '✅ Selesaikan'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function closeCompleteModal() {
+    const modal = document.getElementById('complete-modal');
+    if (modal) modal.remove();
+}
+
+function reopenProject() {
+    if (!confirm('Apakah Anda yakin ingin membuka kembali project yang sudah selesai ini?')) {
+        return;
+    }
+    
+    fetch(`/projects/{{ $project->project_id }}/reopen`, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('✅ ' + data.message, 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            showMessage(data.message || '❌ Gagal membuka kembali project', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('❌ Terjadi kesalahan saat membuka kembali project', 'error');
     });
 }
 </script>
