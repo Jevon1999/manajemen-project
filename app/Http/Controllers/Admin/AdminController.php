@@ -26,10 +26,44 @@ class AdminController extends Controller
         $completedTasks = Card::where('status', 'done')->count();
         $completionRate = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100, 1) : 0;
         
+        // Overdue projects
+        $overdueProjects = Project::where('deadline', '<', now())
+            ->where('status', '!=', 'completed')
+            ->count();
+        
+        // Upcoming deadlines (next 7 days)
+        $upcomingDeadlines = Project::where('deadline', '>=', now())
+            ->where('deadline', '<=', now()->addDays(7))
+            ->where('status', '!=', 'completed')
+            ->with('creator')
+            ->orderBy('deadline', 'asc')
+            ->take(5)
+            ->get();
+        
+        // Project creation trend (last 6 months)
+        $projectTrend = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $projectTrend[] = [
+                'month' => $month->format('M'),
+                'count' => Project::whereYear('created_at', $month->year)
+                    ->whereMonth('created_at', $month->month)
+                    ->count()
+            ];
+        }
+        
+        // Task status distribution
+        $taskDistribution = [
+            'todo' => Card::where('status', 'todo')->count(),
+            'in_progress' => Card::where('status', 'in_progress')->count(),
+            'done' => $completedTasks,
+        ];
+        
         $stats = [
             'total_users' => User::count(),
             'total_projects' => Project::count(),
             'active_projects' => Project::where('status', 'active')->count(),
+            'overdue_projects' => $overdueProjects,
             'total_tasks' => $totalTasks,
             'completed_tasks' => $completedTasks,
             'pending_tasks' => Card::whereIn('status', ['todo', 'in_progress'])->count(),
@@ -39,7 +73,7 @@ class AdminController extends Controller
         $recent_users = User::latest()->take(5)->get();
         $recent_projects = Project::with('creator')->latest()->take(5)->get();
 
-        return view('admin.dashboard', compact('stats', 'recent_users', 'recent_projects'));
+        return view('admin.dashboard', compact('stats', 'recent_users', 'recent_projects', 'upcomingDeadlines', 'projectTrend', 'taskDistribution'));
     }
 
     /**
