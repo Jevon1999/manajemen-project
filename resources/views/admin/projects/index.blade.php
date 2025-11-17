@@ -5,7 +5,7 @@
 @section('page-description', 'Kelola dan monitor semua proyek dalam sistem')
 
 @section('content')
-<div id="projectApp" class="space-y-6" x-ignore>
+<div id="projectApp" class="space-y-6" x-data="{ activeTab: 'all' }"
     <!-- Container Statistik -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" data-aos="fade-up">
         <!-- Total Proyek -->
@@ -190,18 +190,30 @@
                             class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
                         <i class="fas fa-th mr-2"></i>
                         All Projects
+                        <span :class="activeTab === 'all' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'"
+                              class="ml-2 py-0.5 px-2.5 rounded-full text-xs font-medium inline-block">
+                            {{ $totalProjects ?? 0 }}
+                        </span>
                     </button>
                     <button @click="activeTab = 'active'" 
                             :class="activeTab === 'active' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                             class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
                         <i class="fas fa-play-circle mr-2"></i>
                         Active
+                        <span :class="activeTab === 'active' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'"
+                              class="ml-2 py-0.5 px-2.5 rounded-full text-xs font-medium inline-block">
+                            {{ $activeProjects ?? 0 }}
+                        </span>
                     </button>
                     <button @click="activeTab = 'completed'" 
-                            :class="activeTab === 'completed' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                            :class="activeTab === 'completed' ? 'border-purple-500 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                             class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
                         <i class="fas fa-check-circle mr-2"></i>
-                        Completed ({{ $completedProjects }})
+                        Completed
+                        <span :class="activeTab === 'completed' ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-600'"
+                              class="ml-2 py-0.5 px-2.5 rounded-full text-xs font-medium inline-block">
+                            {{ $completedProjects ?? 0 }}
+                        </span>
                     </button>
                 </nav>
             </div>
