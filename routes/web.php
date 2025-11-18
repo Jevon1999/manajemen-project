@@ -206,6 +206,12 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/export/task-details', [\App\Http\Controllers\Admin\ReportController::class, 'exportTaskDetails'])->name('export.task-details');
             Route::get('/export/comprehensive', [\App\Http\Controllers\Admin\ReportController::class, 'exportComprehensive'])->name('export.comprehensive');
             
+            // Report Type Specific Exports
+            Route::get('/export/monthly', [\App\Http\Controllers\Admin\ReportController::class, 'exportMonthly'])->name('export.monthly');
+            Route::get('/export/yearly', [\App\Http\Controllers\Admin\ReportController::class, 'exportYearly'])->name('export.yearly');
+            Route::get('/export/per-project', [\App\Http\Controllers\Admin\ReportController::class, 'exportPerProject'])->name('export.per-project');
+            Route::get('/export/general', [\App\Http\Controllers\Admin\ReportController::class, 'exportGeneral'])->name('export.general');
+            
             // General Reports (keep for backward compatibility)
             Route::get('/', [\App\Http\Controllers\ReportController::class, 'index'])->name('index');
             Route::post('/generate', [\App\Http\Controllers\ReportController::class, 'generate'])->name('generate');

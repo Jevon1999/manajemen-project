@@ -9,8 +9,13 @@ use App\Exports\UsersExport;
 use App\Exports\ComprehensiveProjectReport;
 use App\Exports\TaskDetailsReport;
 use App\Exports\FullReportExport;
+use App\Exports\MonthlyReport;
+use App\Exports\YearlyReport;
+use App\Exports\PerProjectReport;
+use App\Exports\GeneralReport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use App\Models\Project;
 
 class ReportController extends Controller
 {
@@ -102,5 +107,80 @@ class ReportController extends Controller
         }
 
         return Excel::download($export, $filename . '.xlsx');
+    }
+
+    /**
+     * Export monthly report
+     */
+    public function exportMonthly(Request $request)
+    {
+        $month = $request->query('month', now()->month);
+        $year = $request->query('year', now()->year);
+        $format = $request->query('format', 'xlsx');
+        $filename = 'monthly_report_' . $year . '_' . str_pad($month, 2, '0', STR_PAD_LEFT) . '_' . date('His');
+
+        $export = new MonthlyReport($month, $year);
+
+        if ($format === 'csv') {
+            return Excel::download($export, $filename . '.csv', \Maatwebsite\Excel\Excel::CSV);
+        }
+
+        return Excel::download($export, $filename . '.xlsx');
+    }
+
+    /**
+     * Export yearly report
+     */
+    public function exportYearly(Request $request)
+    {
+        $year = $request->query('year', now()->year);
+        $format = $request->query('format', 'xlsx');
+        $filename = 'yearly_report_' . $year . '_' . date('His');
+
+        $export = new YearlyReport($year);
+
+        if ($format === 'csv') {
+            return Excel::download($export, $filename . '.csv', \Maatwebsite\Excel\Excel::CSV);
+        }
+
+        return Excel::download($export, $filename . '.xlsx');
+    }
+
+    /**
+     * Export per project report
+     */
+    public function exportPerProject(Request $request)
+    {
+        $projectId = $request->query('project_id');
+        
+        if (!$projectId) {
+            return back()->with('error', 'Project ID is required');
+        }
+
+        $project = Project::find($projectId);
+        $format = $request->query('format', 'xlsx');
+        $filename = 'per_project_report_' . ($project ? str_replace(' ', '_', $project->name) : 'project') . '_' . date('Y-m-d_His');
+
+        $export = new PerProjectReport($projectId);
+
+        if ($format === 'csv') {
+            return Excel::download($export, $filename . '.csv', \Maatwebsite\Excel\Excel::CSV);
+        }
+
+        return Excel::download($export, $filename . '.xlsx');
+    }
+
+    /**
+     * Export general report (multi-sheet)
+     */
+    public function exportGeneral(Request $request)
+    {
+        $month = $request->query('month');
+        $year = $request->query('year');
+        $filename = 'general_report_' . date('Y-m-d_His') . '.xlsx';
+
+        $export = new GeneralReport($month, $year);
+
+        return Excel::download($export, $filename);
     }
 }
