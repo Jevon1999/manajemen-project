@@ -150,6 +150,10 @@ class ComprehensiveProjectReport implements
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'vertical' => Alignment::VERTICAL_CENTER,
                 ],
+            ],
+        ];
+    }
+
     public function columnFormats(): array
     {
         return [
@@ -160,10 +164,6 @@ class ComprehensiveProjectReport implements
         ];
     }
 
-    public function title(): string
-    {
-        return 'Project Comprehensive';
-    }
     public function title(): string
     {
         return 'Project Summary';
