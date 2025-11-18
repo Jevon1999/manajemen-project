@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="min-h-screen bg-gray-50">
-    <div class="flex-1 p-8">
+    <div class="flex-1 p-3 sm:p-4 md:p-6 lg:p-8">
         <!-- Header -->
         <div class="mb-8">
             <h1 class="text-2xl font-semibold text-gray-900">Admin Dashboard</h1>
@@ -73,9 +73,9 @@
         </div>
 
         <!-- Quick Actions -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8">
             <!-- Recent Activity -->
-            <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6">
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Recent Activity</h2>
                 <div class="space-y-4">
                     @if(isset($recentActivities) && count($recentActivities) > 0)
@@ -114,9 +114,9 @@
             </div>
 
             <!-- Quick Actions -->
-            <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6">
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h2>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <a href="{{ route('admin.users.create') }}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
                         <svg class="w-6 h-6 text-gray-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
@@ -162,9 +162,9 @@
         </div>
 
         <!-- System Health -->
-        <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="bg-white rounded-lg shadow-sm p-4 sm:p-6">
             <h2 class="text-lg font-medium text-gray-900 mb-4">System Health</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                 <!-- Server Status -->
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">

@@ -23,15 +23,15 @@
     
     <!-- Dropdown -->
     <div x-show="open" 
-         @click.away="open = false"
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="transform opacity-0 scale-95 -translate-y-2"
-         x-transition:enter-end="transform opacity-100 scale-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="transform opacity-100 scale-100"
-         x-transition:leave-end="transform opacity-0 scale-95"
-         class="absolute right-0 mt-2 w-[calc(100vw-1rem)] sm:w-80 max-w-sm bg-white rounded-lg shadow-2xl border border-gray-200 z-50 overflow-hidden"
-         style="display: none;">
+        @click.away="open = false"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="transform opacity-0 scale-95 -translate-y-2"
+        x-transition:enter-end="transform opacity-100 scale-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="transform opacity-100 scale-100"
+        x-transition:leave-end="transform opacity-0 scale-95"
+        class="absolute top-full mt-2 right-2 sm:right-4 w-[calc(100vw-1rem)] sm:w-[22rem] md:w-[24rem] sm:min-w-[18rem] max-w-[90vw] bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden text-left"
+        style="display: none;">
         
         <!-- Header -->
         <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-3 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between">
@@ -43,8 +43,8 @@
             </button>
         </div>
         
-        <!-- Notifications List -->
-        <div class="max-h-[60vh] overflow-y-auto">
+    <!-- Notifications List -->
+    <div class="max-h-[60vh] overflow-y-auto">
             <!-- Loading State -->
             <div x-show="loading" class="p-4 text-center">
                 <svg class="animate-spin h-6 w-6 sm:h-8 sm:w-8 text-indigo-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -72,12 +72,12 @@
                                 <!-- Content -->
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-start justify-between">
-                                        <p class="text-xs sm:text-sm font-semibold text-gray-900 truncate pr-2" x-text="notification.title"></p>
+                                        <p class="text-xs sm:text-sm font-semibold text-gray-900 truncate pr-2 leading-snug" x-text="notification.title"></p>
                                         <!-- Unread Indicator -->
                                         <span x-show="!notification.is_read" 
                                               class="flex-shrink-0 w-2 h-2 bg-blue-600 rounded-full"></span>
                                     </div>
-                                    <p class="text-xs text-gray-600 mt-0.5 line-clamp-2" x-text="notification.message"></p>
+                                    <p class="text-xs text-gray-600 mt-0.5 line-clamp-2 leading-relaxed" x-text="notification.message"></p>
                                     <p class="text-[10px] sm:text-xs text-gray-400 mt-1" x-text="notification.created_at"></p>
                                 </div>
                             </div>
