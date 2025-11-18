@@ -30,7 +30,7 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="transform opacity-100 scale-100"
         x-transition:leave-end="transform opacity-0 scale-95"
-        class="absolute top-full mt-2 right-2 sm:right-4 w-[calc(100vw-1rem)] sm:w-[22rem] md:w-[24rem] sm:min-w-[18rem] max-w-[90vw] bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden text-left"
+        class="absolute top-full mt-2 right-2 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 w-[calc(100vw-1rem)] sm:w-[22rem] md:w-[24rem] sm:min-w-[18rem] max-w-[90vw] bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden"
         style="display: none;">
         
         <!-- Header -->
@@ -72,12 +72,12 @@
                                 <!-- Content -->
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-start justify-between">
-                                        <p class="text-xs sm:text-sm font-semibold text-gray-900 truncate pr-2 leading-snug" x-text="notification.title"></p>
+                                        <p class="text-xs sm:text-sm font-semibold text-gray-900 pr-2 leading-snug break-words" x-text="notification.title"></p>
                                         <!-- Unread Indicator -->
                                         <span x-show="!notification.is_read" 
                                               class="flex-shrink-0 w-2 h-2 bg-blue-600 rounded-full"></span>
                                     </div>
-                                    <p class="text-xs text-gray-600 mt-0.5 line-clamp-2 leading-relaxed" x-text="notification.message"></p>
+                                    <p class="text-xs text-gray-600 mt-0.5 leading-relaxed break-words" x-text="notification.message"></p>
                                     <p class="text-[10px] sm:text-xs text-gray-400 mt-1" x-text="notification.created_at"></p>
                                 </div>
                             </div>
