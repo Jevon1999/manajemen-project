@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Exports\ProjectsExport;
 use App\Exports\TasksExport;
 use App\Exports\UsersExport;
+use App\Exports\ComprehensiveProjectReport;
+use App\Exports\TaskDetailsReport;
+use App\Exports\FullReportExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 
@@ -56,19 +59,48 @@ class ReportController extends Controller
     /**
      * Export comprehensive report (all data in multiple sheets)
      */
-    public function exportComprehensive()
+    public function exportComprehensive(Request $request)
     {
+        $projectId = $request->query('project_id');
         $filename = 'comprehensive_report_' . date('Y-m-d_His') . '.xlsx';
 
-        return Excel::download(new class implements \Maatwebsite\Excel\Concerns\WithMultipleSheets {
-            public function sheets(): array
-            {
-                return [
-                    new ProjectsExport(),
-                    new TasksExport(),
-                    new UsersExport(),
-                ];
-            }
-        }, $filename);
+        return Excel::download(new FullReportExport($projectId), $filename);
+    }
+
+    /**
+     * Export comprehensive project report
+     */
+    public function exportComprehensiveProject(Request $request)
+    {
+        $status = $request->query('status');
+        $format = $request->query('format', 'xlsx');
+        $filename = 'project_comprehensive_' . date('Y-m-d_His');
+
+        $export = new ComprehensiveProjectReport($status);
+
+        if ($format === 'csv') {
+            return Excel::download($export, $filename . '.csv', \Maatwebsite\Excel\Excel::CSV);
+        }
+
+        return Excel::download($export, $filename . '.xlsx');
+    }
+
+    /**
+     * Export task details report
+     */
+    public function exportTaskDetails(Request $request)
+    {
+        $projectId = $request->query('project_id');
+        $status = $request->query('status');
+        $format = $request->query('format', 'xlsx');
+        $filename = 'task_details_' . date('Y-m-d_His');
+
+        $export = new TaskDetailsReport($projectId, $status);
+
+        if ($format === 'csv') {
+            return Excel::download($export, $filename . '.csv', \Maatwebsite\Excel\Excel::CSV);
+        }
+
+        return Excel::download($export, $filename . '.xlsx');
     }
 }

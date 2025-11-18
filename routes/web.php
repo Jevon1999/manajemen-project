@@ -195,9 +195,15 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('reports')->name('reports.')->group(function () {
             // Excel Export Page & Routes
             Route::get('/export', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('export.index');
+            
+            // Simple Exports (Basic)
             Route::get('/export/projects', [\App\Http\Controllers\Admin\ReportController::class, 'exportProjects'])->name('export.projects');
             Route::get('/export/tasks', [\App\Http\Controllers\Admin\ReportController::class, 'exportTasks'])->name('export.tasks');
             Route::get('/export/users', [\App\Http\Controllers\Admin\ReportController::class, 'exportUsers'])->name('export.users');
+            
+            // Comprehensive Exports (Advanced with CSV support)
+            Route::get('/export/comprehensive-project', [\App\Http\Controllers\Admin\ReportController::class, 'exportComprehensiveProject'])->name('export.comprehensive-project');
+            Route::get('/export/task-details', [\App\Http\Controllers\Admin\ReportController::class, 'exportTaskDetails'])->name('export.task-details');
             Route::get('/export/comprehensive', [\App\Http\Controllers\Admin\ReportController::class, 'exportComprehensive'])->name('export.comprehensive');
             
             // General Reports (keep for backward compatibility)
