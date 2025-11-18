@@ -91,6 +91,9 @@
                 
                 <!-- Submenu -->
                 <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" class="mt-1 space-y-1 pl-11">
+                    <a href="{{ route('admin.reports.export.index') }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 {{ Request::is('admin/reports/export') ? 'bg-red-700 text-white' : 'text-red-200' }}">
+                        📥 Excel/CSV Export
+                    </a>
                     <a href="{{ route('admin.reports.index') }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 {{ Request::is('admin/reports') && !Request::has('type') ? 'bg-red-700 text-white' : 'text-red-200' }}">
                         📊 General Report
                     </a>

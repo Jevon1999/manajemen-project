@@ -103,6 +103,10 @@
                  x-transition:leave-start="opacity-100 translate-y-0"
                  x-transition:leave-end="opacity-0 -translate-y-1"
                  class="mt-2 space-y-1 bg-purple-900 bg-opacity-50 rounded-lg p-2 ml-4">
+                <a href="{{ route('admin.reports.export.index') }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 {{ Request::is('admin/reports/export') ? 'bg-purple-600 text-white shadow-sm' : 'text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4' }}">
+                    <span class="mr-2">📥</span>
+                    <span>Excel/CSV Export</span>
+                </a>
                 <a href="{{ route('admin.reports.index') }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 {{ Request::is('admin/reports') && !Request::has('type') ? 'bg-purple-600 text-white shadow-sm' : 'text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4' }}">
                     <span class="mr-2">📊</span>
                     <span>General Report</span>
