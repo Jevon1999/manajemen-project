@@ -24,6 +24,13 @@
     <!-- Alpine.js x-cloak -->
     <style>
         [x-cloak] { display: none !important; }
+        
+        /* Prevent sidebar flash on mobile */
+        @media (max-width: 1023px) {
+            aside.fixed.-translate-x-full {
+                display: none;
+            }
+        }
     </style>
     
     <!-- Custom Scrollbar Styles -->

@@ -21,7 +21,7 @@
          class="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"></div>
 
     <!-- Sidebar -->
-    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+    <aside :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
            class="fixed inset-y-0 left-0 z-50 w-64 h-full bg-gradient-to-b from-purple-900 via-indigo-900 to-purple-800 text-white flex flex-col shadow-2xl overflow-y-auto scrollbar-custom transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 lg:rounded-r-2xl"
            x-cloak>
     <!-- Header Sidebar -->
