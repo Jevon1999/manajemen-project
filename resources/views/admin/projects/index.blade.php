@@ -5,7 +5,7 @@
 @section('page-description', 'Kelola dan monitor semua proyek dalam sistem')
 
 @section('content')
-<div id="projectApp" class="space-y-6" x-data="{ activeTab: 'all' }"
+<div id="projectApp" class="space-y-6" x-data="{ activeTab: 'all' }">
     <!-- Container Statistik -->
     <div class="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4" data-aos="fade-up">
         <!-- Total Proyek -->
