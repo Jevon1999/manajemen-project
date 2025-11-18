@@ -30,7 +30,7 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="transform opacity-100 scale-100"
         x-transition:leave-end="transform opacity-0 scale-95"
-        class="absolute top-full mt-2 right-0 w-80 sm:w-96 md:w-[28rem] bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden"
+        class="absolute top-full mt-2 -right-2 sm:right-0 w-[90vw] sm:w-96 md:w-[30rem] lg:w-[32rem] max-w-lg bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden"
         style="display: none;">
         
         <!-- Header -->
