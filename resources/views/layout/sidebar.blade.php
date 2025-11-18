@@ -107,19 +107,19 @@
                     <span class="mr-2">📥</span>
                     <span>Excel/CSV Export</span>
                 </a>
-                <a href="{{ route('admin.reports.index') }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 {{ Request::is('admin/reports') && !Request::has('type') ? 'bg-purple-600 text-white shadow-sm' : 'text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4' }}">
+                <a href="{{ route('admin.reports.export.general') }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4">
                     <span class="mr-2">📊</span>
                     <span>General Report</span>
                 </a>
-                <a href="{{ route('admin.reports.index', ['type' => 'project']) }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 {{ Request::get('type') == 'project' ? 'bg-purple-600 text-white shadow-sm' : 'text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4' }}">
+                <a href="#" onclick="selectProject(event)" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4">
                     <span class="mr-2">📁</span>
                     <span>Per Project</span>
                 </a>
-                <a href="{{ route('admin.reports.index', ['type' => 'monthly']) }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 {{ Request::get('type') == 'monthly' ? 'bg-purple-600 text-white shadow-sm' : 'text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4' }}">
+                <a href="{{ route('admin.reports.export.monthly', ['month' => date('n'), 'year' => date('Y')]) }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4">
                     <span class="mr-2">📅</span>
                     <span>Monthly Report</span>
                 </a>
-                <a href="{{ route('admin.reports.index', ['type' => 'yearly']) }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 {{ Request::get('type') == 'yearly' ? 'bg-purple-600 text-white shadow-sm' : 'text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4' }}">
+                <a href="{{ route('admin.reports.export.yearly', ['year' => date('Y')]) }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4">
                     <span class="mr-2">📆</span>
                     <span>Yearly Report</span>
                 </a>
@@ -208,3 +208,37 @@
         </form>
     </div>
 </aside>
+
+<script>
+function selectProject(e) {
+    e.preventDefault();
+    
+    Swal.fire({
+        title: 'Select Project',
+        text: 'Enter Project ID to export:',
+        input: 'number',
+        inputAttributes: {
+            min: 1,
+            placeholder: 'Project ID'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Export Excel',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#4F46E5',
+        showDenyButton: true,
+        denyButtonText: 'Export CSV',
+        denyButtonColor: '#10B981',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'You need to enter a Project ID!'
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '{{ route("admin.reports.export.per-project") }}?project_id=' + result.value + '&format=xlsx';
+        } else if (result.isDenied) {
+            window.location.href = '{{ route("admin.reports.export.per-project") }}?project_id=' + result.value + '&format=csv';
+        }
+    });
+}
+</script>

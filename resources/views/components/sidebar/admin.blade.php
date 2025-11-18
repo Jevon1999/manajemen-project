@@ -94,16 +94,16 @@
                     <a href="{{ route('admin.reports.export.index') }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 {{ Request::is('admin/reports/export') ? 'bg-red-700 text-white' : 'text-red-200' }}">
                         📥 Excel/CSV Export
                     </a>
-                    <a href="{{ route('admin.reports.index') }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 {{ Request::is('admin/reports') && !Request::has('type') ? 'bg-red-700 text-white' : 'text-red-200' }}">
+                    <a href="{{ route('admin.reports.export.general') }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 text-red-200">
                         📊 General Report
                     </a>
-                    <a href="{{ route('admin.reports.index', ['type' => 'project']) }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 {{ Request::get('type') == 'project' ? 'bg-red-700 text-white' : 'text-red-200' }}">
+                    <a href="#" onclick="selectProject(event)" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 text-red-200">
                         📁 Per Project
                     </a>
-                    <a href="{{ route('admin.reports.index', ['type' => 'monthly']) }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 {{ Request::get('type') == 'monthly' ? 'bg-red-700 text-white' : 'text-red-200' }}">
+                    <a href="{{ route('admin.reports.export.monthly', ['month' => date('n'), 'year' => date('Y')]) }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 text-red-200">
                         📅 Monthly Report
                     </a>
-                    <a href="{{ route('admin.reports.index', ['type' => 'yearly']) }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 {{ Request::get('type') == 'yearly' ? 'bg-red-700 text-white' : 'text-red-200' }}">
+                    <a href="{{ route('admin.reports.export.yearly', ['year' => date('Y')]) }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 text-red-200">
                         📆 Yearly Report
                     </a>
                 </div>
