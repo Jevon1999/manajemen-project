@@ -643,13 +643,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const categoryFilter = document.getElementById('category');
     const priorityFilter = document.getElementById('priority');
 
+    // Check if elements exist before adding listeners
+    if (!searchInput || !statusFilter || !categoryFilter || !priorityFilter) {
+        console.log('Some filter elements not found, skipping filter initialization');
+        return;
+    }
+
     function applyFilters() {
         const params = new URLSearchParams(window.location.search);
         
-        const search = searchInput.value;
-        const status = statusFilter.value;
-        const category = categoryFilter.value;
-        const priority = priorityFilter.value;
+        const search = searchInput?.value || '';
+        const status = statusFilter?.value || '';
+        const category = categoryFilter?.value || '';
+        const priority = priorityFilter?.value || '';
 
         if (search) params.set('search', search); else params.delete('search');
         if (status) params.set('status', status); else params.delete('status');
@@ -660,23 +666,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Search on Enter
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            applyFilters();
-        }
-    });
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyFilters();
+            }
+        });
+    }
 
     // Auto apply on filter change
-    statusFilter.addEventListener('change', applyFilters);
-    categoryFilter.addEventListener('change', applyFilters);
-    priorityFilter.addEventListener('change', applyFilters);
+    if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+    if (categoryFilter) categoryFilter.addEventListener('change', applyFilters);
+    if (priorityFilter) priorityFilter.addEventListener('change', applyFilters);
 
     // Restore filter values from URL
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('search')) searchInput.value = urlParams.get('search');
-    if (urlParams.has('status')) statusFilter.value = urlParams.get('status');
-    if (urlParams.has('category')) categoryFilter.value = urlParams.get('category');
-    if (urlParams.has('priority')) priorityFilter.value = urlParams.get('priority');
+    if (urlParams.has('search') && searchInput) searchInput.value = urlParams.get('search');
+    if (urlParams.has('status') && statusFilter) statusFilter.value = urlParams.get('status');
+    if (urlParams.has('category') && categoryFilter) categoryFilter.value = urlParams.get('category');
+    if (urlParams.has('priority') && priorityFilter) priorityFilter.value = urlParams.get('priority');
 });
 
 // Alpine.js - Force show cards on initial load based on activeTab
