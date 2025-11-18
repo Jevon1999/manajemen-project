@@ -155,7 +155,7 @@
             
             <!-- Main Content -->
             <main class="flex-1 overflow-y-auto bg-gray-50">
-                <div class="p-3 sm:p-4 md:p-6 lg:p-8 pt-16 sm:pt-4">
+                <div class="p-3 sm:p-4 md:p-6 lg:p-8 pt-16 sm:pt-4 pb-24 sm:pb-28">
                     <!-- Breadcrumb -->
                     @if(isset($breadcrumbs))
                     <nav class="flex mb-4 sm:mb-6 overflow-x-auto" aria-label="Breadcrumb">
@@ -236,17 +236,27 @@
     <!-- Real-time Notifications -->
     {{-- <script src="{{ asset('js/notifications.js') }}"></script> --}}
     
-    <!-- Floating Action Button (mobile/tablet) - Optional Quick Action -->
+    <!-- Floating Action Button -->
     @if(auth()->user()->role == 'admin' || auth()->user()->role == 'leader')
-    <div class="fixed bottom-6 right-6 z-30 lg:hidden">
-        <button onclick="window.location.href='{{ auth()->user()->role == 'admin' ? route('admin.projects.create') : route('leader.projects') }}'"
-                class="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200 transform hover:scale-110" 
-                title="Quick Action">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-        </button>
-    </div>
+    <a href="{{ auth()->user()->role == 'admin' ? route('admin.projects.create') : route('leader.projects') }}"
+       class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8
+              w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16
+              bg-gradient-to-br from-indigo-600 to-purple-700 
+              hover:from-indigo-700 hover:to-purple-800
+              text-white rounded-full shadow-2xl 
+              flex items-center justify-center 
+              transition-all duration-300 hover:scale-110 active:scale-95
+              z-40 group focus:outline-none focus:ring-4 focus:ring-indigo-300">
+        <svg class="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 group-hover:rotate-90 transition-transform duration-300" 
+             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        <!-- Tooltip -->
+        <span class="absolute right-full mr-3 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-lg 
+                     opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none hidden sm:block">
+            {{ auth()->user()->role == 'admin' ? 'Create Project' : 'Quick Action' }}
+        </span>
+    </a>
     @endif
     
     <!-- Close sidebar when clicking outside (mobile) -->
