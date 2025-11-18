@@ -76,38 +76,13 @@
                 Task Management
             </a>
             
-            <!-- Reports Section with Submenu -->
-            <div x-data="{ open: {{ Request::routeIs('admin.reports.*') ? 'true' : 'false' }} }">
-                <!-- Main Reports Button -->
-                <button @click="open = !open" class="group flex items-center w-full px-4 py-3 text-sm font-medium rounded-lg hover:bg-red-700 transition-colors duration-200 {{ Request::routeIs('admin.reports.*') ? 'bg-red-700 text-white' : 'text-red-100' }}">
-                    <svg class="w-5 h-5 mr-3 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    <span class="flex-1 text-left">Reports</span>
-                    <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-                </button>
-                
-                <!-- Submenu -->
-                <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" class="mt-1 space-y-1 pl-11">
-                    <a href="{{ route('admin.reports.export.index') }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 {{ Request::is('admin/reports/export') ? 'bg-red-700 text-white' : 'text-red-200' }}">
-                        📥 Excel/CSV Export
-                    </a>
-                    <a href="{{ route('admin.reports.export.general') }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 text-red-200">
-                        📊 General Report
-                    </a>
-                    <a href="#" onclick="selectProject(event)" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 text-red-200">
-                        📁 Per Project
-                    </a>
-                    <a href="{{ route('admin.reports.export.monthly', ['month' => date('n'), 'year' => date('Y')]) }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 text-red-200">
-                        📅 Monthly Report
-                    </a>
-                    <a href="{{ route('admin.reports.export.yearly', ['year' => date('Y')]) }}" class="block px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 text-red-200">
-                        📆 Yearly Report
-                    </a>
-                </div>
-            </div>
+            <!-- Reports - Direct Link -->
+            <a href="{{ route('admin.reports.export.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-red-700 transition-colors duration-200 {{ Request::routeIs('admin.reports.*') ? 'bg-red-700 text-white' : 'text-red-100' }}">
+                <svg class="w-5 h-5 mr-3 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span>Reports</span>
+            </a>
             
             <!-- System Settings -->
             <a href="{{ route('admin.settings') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-red-700 transition-colors duration-200 {{ Request::routeIs('admin.settings*') ? 'bg-red-700 text-white' : 'text-red-100' }}">

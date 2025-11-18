@@ -82,49 +82,13 @@
 
         @if(auth()->user()->role == 'admin')
         <!-- Reports Section with Submenu -->
-        <div x-data="{ open: {{ Request::routeIs('admin.reports.*') ? 'true' : 'false' }} }">
-            <!-- Main Reports Button -->
-            <button @click="open = !open" class="group flex items-center w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200 {{ Request::routeIs('admin.reports.*') ? 'bg-purple-700 text-white' : 'text-gray-300 hover:bg-purple-700 hover:text-white' }}">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                <span class="flex-1 text-left">Reports</span>
-                <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-            </button>
-            
-            <!-- Submenu -->
-            <div x-show="open" 
-                 x-transition:enter="transition ease-out duration-200" 
-                 x-transition:enter-start="opacity-0 -translate-y-1" 
-                 x-transition:enter-end="opacity-100 translate-y-0"
-                 x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100 translate-y-0"
-                 x-transition:leave-end="opacity-0 -translate-y-1"
-                 class="mt-2 space-y-1 bg-purple-900 bg-opacity-50 rounded-lg p-2 ml-4">
-                <a href="{{ route('admin.reports.export.index') }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 {{ Request::is('admin/reports/export') ? 'bg-purple-600 text-white shadow-sm' : 'text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4' }}">
-                    <span class="mr-2">📥</span>
-                    <span>Excel/CSV Export</span>
-                </a>
-                <a href="{{ route('admin.reports.export.general') }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4">
-                    <span class="mr-2">📊</span>
-                    <span>General Report</span>
-                </a>
-                <a href="#" onclick="selectProject(event)" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4">
-                    <span class="mr-2">📁</span>
-                    <span>Per Project</span>
-                </a>
-                <a href="{{ route('admin.reports.export.monthly', ['month' => date('n'), 'year' => date('Y')]) }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4">
-                    <span class="mr-2">📅</span>
-                    <span>Monthly Report</span>
-                </a>
-                <a href="{{ route('admin.reports.export.yearly', ['year' => date('Y')]) }}" class="flex items-center px-3 py-2 text-xs font-medium rounded-md transition-all duration-200 text-gray-300 hover:bg-purple-700 hover:text-white hover:pl-4">
-                    <span class="mr-2">📆</span>
-                    <span>Yearly Report</span>
-                </a>
-            </div>
-        </div>
+        <!-- Reports - Direct Link -->
+        <a href="{{ route('admin.reports.export.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200 {{ Request::routeIs('admin.reports.*') ? 'bg-purple-700 text-white' : 'text-gray-300 hover:bg-purple-700 hover:text-white' }}">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span>Reports</span>
+        </a>
         @endif
 
         <!-- LEADER MENUS -->
@@ -208,37 +172,3 @@
         </form>
     </div>
 </aside>
-
-<script>
-function selectProject(e) {
-    e.preventDefault();
-    
-    Swal.fire({
-        title: 'Select Project',
-        text: 'Enter Project ID to export:',
-        input: 'number',
-        inputAttributes: {
-            min: 1,
-            placeholder: 'Project ID'
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Export Excel',
-        cancelButtonText: 'Cancel',
-        confirmButtonColor: '#4F46E5',
-        showDenyButton: true,
-        denyButtonText: 'Export CSV',
-        denyButtonColor: '#10B981',
-        inputValidator: (value) => {
-            if (!value) {
-                return 'You need to enter a Project ID!'
-            }
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = '{{ route("admin.reports.export.per-project") }}?project_id=' + result.value + '&format=xlsx';
-        } else if (result.isDenied) {
-            window.location.href = '{{ route("admin.reports.export.per-project") }}?project_id=' + result.value + '&format=csv';
-        }
-    });
-}
-</script>
