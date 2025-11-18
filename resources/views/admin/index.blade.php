@@ -10,16 +10,16 @@
         </div>
 
         <!-- Statistics Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
             <!-- Total Users -->
-            <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg shadow-sm p-6">
+            <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg shadow-sm p-4 sm:p-6 hover:shadow-lg transition-shadow">
                 <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-indigo-100">Total Users</p>
-                        <p class="text-2xl font-bold text-white">{{ $totalUsers ?? 0 }}</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs sm:text-sm font-medium text-indigo-100 truncate">Total Users</p>
+                        <p class="text-xl sm:text-2xl font-bold text-white truncate">{{ $totalUsers ?? 0 }}</p>
                     </div>
-                    <div class="p-3 bg-indigo-400 bg-opacity-30 rounded-full">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 sm:p-3 bg-indigo-400 bg-opacity-30 rounded-full flex-shrink-0">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                         </svg>
                     </div>
@@ -27,14 +27,14 @@
             </div>
 
             <!-- Active Projects -->
-            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-sm p-6">
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-sm p-4 sm:p-6 hover:shadow-lg transition-shadow">
                 <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-blue-100">Active Projects</p>
-                        <p class="text-2xl font-bold text-white">{{ $activeProjects ?? 0 }}</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs sm:text-sm font-medium text-blue-100 truncate">Active Projects</p>
+                        <p class="text-xl sm:text-2xl font-bold text-white truncate">{{ $activeProjects ?? 0 }}</p>
                     </div>
-                    <div class="p-3 bg-blue-400 bg-opacity-30 rounded-full">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 sm:p-3 bg-blue-400 bg-opacity-30 rounded-full flex-shrink-0">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
                     </div>
@@ -42,14 +42,14 @@
             </div>
 
             <!-- Total Tasks -->
-            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-sm p-6">
+            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-sm p-4 sm:p-6 hover:shadow-lg transition-shadow">
                 <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-purple-100">Total Tasks</p>
-                        <p class="text-2xl font-bold text-white">{{ $totalTasks ?? 0 }}</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs sm:text-sm font-medium text-purple-100 truncate">Total Tasks</p>
+                        <p class="text-xl sm:text-2xl font-bold text-white truncate">{{ $totalTasks ?? 0 }}</p>
                     </div>
-                    <div class="p-3 bg-purple-400 bg-opacity-30 rounded-full">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 sm:p-3 bg-purple-400 bg-opacity-30 rounded-full flex-shrink-0">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                         </svg>
                     </div>
@@ -57,14 +57,14 @@
             </div>
 
             <!-- System Status -->
-            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-sm p-6">
+            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-sm p-4 sm:p-6 hover:shadow-lg transition-shadow">
                 <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-green-100">System Status</p>
-                        <p class="text-2xl font-bold text-white">Healthy</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs sm:text-sm font-medium text-green-100 truncate">System Status</p>
+                        <p class="text-xl sm:text-2xl font-bold text-white truncate">Healthy</p>
                     </div>
-                    <div class="p-3 bg-green-400 bg-opacity-30 rounded-full">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 sm:p-3 bg-green-400 bg-opacity-30 rounded-full flex-shrink-0">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>

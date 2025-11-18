@@ -155,7 +155,7 @@
             
             <!-- Main Content -->
             <main class="flex-1 overflow-y-auto bg-gray-50">
-                <div class="p-4 sm:p-6">
+                <div class="p-3 sm:p-4 md:p-6 lg:p-8 pt-16 sm:pt-4">
                     <!-- Breadcrumb -->
                     @if(isset($breadcrumbs))
                     <nav class="flex mb-4 sm:mb-6 overflow-x-auto" aria-label="Breadcrumb">
