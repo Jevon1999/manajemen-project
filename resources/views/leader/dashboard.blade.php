@@ -27,28 +27,28 @@
             </header>
 
             <!-- Content Area -->
-            <main class="flex-1 p-6" x-data="leaderDashboard()">
+            <main class="flex-1 p-3 sm:p-4 md:p-6 pb-24 sm:pb-28" x-data="leaderDashboard()">
                 <!-- Success Message -->
                 @if(session('success'))
-                    <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg flex items-center">
+                    <div class="mb-4 sm:mb-6 bg-green-100 border border-green-400 text-green-700 px-3 py-2 sm:px-4 sm:py-3 rounded-lg flex items-center text-sm">
                         <i class="fas fa-check-circle mr-2"></i>
                         {{ session('success') }}
                     </div>
                 @endif
 
                 <!-- Quick Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
                     <!-- My Projects -->
                     <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
-                        <div class="p-5">
-                            <div class="flex items-center">
+                        <div class="p-3 sm:p-4 md:p-5">
+                            <div class="flex items-center gap-3 sm:gap-4">
                                 <div class="flex-shrink-0">
-                                    <i class="fas fa-project-diagram text-blue-500 text-2xl"></i>
+                                    <i class="fas fa-project-diagram text-blue-500 text-xl sm:text-2xl"></i>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
+                                <div class="min-w-0 flex-1">
                                     <dl>
-                                        <dt class="text-sm font-medium text-gray-500 truncate">My Projects</dt>
-                                        <dd class="text-lg font-medium text-gray-900" x-text="stats.projects"></dd>
+                                        <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">My Projects</dt>
+                                        <dd class="text-base sm:text-lg font-medium text-gray-900" x-text="stats.projects"></dd>
                                     </dl>
                                 </div>
                             </div>
@@ -57,15 +57,15 @@
 
                     <!-- Total Tasks -->
                     <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
-                        <div class="p-5">
-                            <div class="flex items-center">
+                        <div class="p-3 sm:p-4 md:p-5">
+                            <div class="flex items-center gap-3 sm:gap-4">
                                 <div class="flex-shrink-0">
-                                    <i class="fas fa-tasks text-green-500 text-2xl"></i>
+                                    <i class="fas fa-tasks text-green-500 text-xl sm:text-2xl"></i>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
+                                <div class="min-w-0 flex-1">
                                     <dl>
-                                        <dt class="text-sm font-medium text-gray-500 truncate">Total Tasks</dt>
-                                        <dd class="text-lg font-medium text-gray-900" x-text="stats.total_tasks"></dd>
+                                        <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">Total Tasks</dt>
+                                        <dd class="text-base sm:text-lg font-medium text-gray-900" x-text="stats.total_tasks"></dd>
                                     </dl>
                                 </div>
                             </div>
@@ -74,15 +74,15 @@
 
                     <!-- Pending Tasks -->
                     <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
-                        <div class="p-5">
-                            <div class="flex items-center">
+                        <div class="p-3 sm:p-4 md:p-5">
+                            <div class="flex items-center gap-3 sm:gap-4">
                                 <div class="flex-shrink-0">
-                                    <i class="fas fa-clock text-yellow-500 text-2xl"></i>
+                                    <i class="fas fa-clock text-yellow-500 text-xl sm:text-2xl"></i>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
+                                <div class="min-w-0 flex-1">
                                     <dl>
-                                        <dt class="text-sm font-medium text-gray-500 truncate">Pending Tasks</dt>
-                                        <dd class="text-lg font-medium text-gray-900" x-text="stats.pending_tasks"></dd>
+                                        <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">Pending Tasks</dt>
+                                        <dd class="text-base sm:text-lg font-medium text-gray-900" x-text="stats.pending_tasks"></dd>
                                     </dl>
                                 </div>
                             </div>
@@ -91,15 +91,15 @@
 
                     <!-- Completed Tasks -->
                     <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
-                        <div class="p-5">
-                            <div class="flex items-center">
+                        <div class="p-3 sm:p-4 md:p-5">
+                            <div class="flex items-center gap-3 sm:gap-4">
                                 <div class="flex-shrink-0">
-                                    <i class="fas fa-check-circle text-purple-500 text-2xl"></i>
+                                    <i class="fas fa-check-circle text-purple-500 text-xl sm:text-2xl"></i>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
+                                <div class="min-w-0 flex-1">
                                     <dl>
-                                        <dt class="text-sm font-medium text-gray-500 truncate">Completed</dt>
-                                        <dd class="text-lg font-medium text-gray-900" x-text="stats.completed_tasks"></dd>
+                                        <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">Completed</dt>
+                                        <dd class="text-base sm:text-lg font-medium text-gray-900" x-text="stats.completed_tasks"></dd>
                                     </dl>
                                 </div>
                             </div>
@@ -108,18 +108,18 @@
                 </div>
 
                 <!-- Completed Projects Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
                     <!-- Total Completed -->
                     <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
-                        <div class="p-5">
-                            <div class="flex items-center">
+                        <div class="p-3 sm:p-4 md:p-5">
+                            <div class="flex items-center gap-3 sm:gap-4">
                                 <div class="flex-shrink-0">
-                                    <i class="fas fa-flag-checkered text-white text-3xl"></i>
+                                    <i class="fas fa-flag-checkered text-white text-2xl sm:text-3xl"></i>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
+                                <div class="min-w-0 flex-1">
                                     <dl>
-                                        <dt class="text-sm font-medium text-indigo-100 truncate">Completed Projects</dt>
-                                        <dd class="text-2xl font-bold text-white" x-text="stats.completed_projects"></dd>
+                                        <dt class="text-xs sm:text-sm font-medium text-indigo-100 truncate">Completed Projects</dt>
+                                        <dd class="text-xl sm:text-2xl font-bold text-white" x-text="stats.completed_projects"></dd>
                                     </dl>
                                 </div>
                             </div>
@@ -128,15 +128,15 @@
 
                     <!-- On Time -->
                     <div class="bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
-                        <div class="p-5">
-                            <div class="flex items-center">
+                        <div class="p-3 sm:p-4 md:p-5">
+                            <div class="flex items-center gap-3 sm:gap-4">
                                 <div class="flex-shrink-0">
-                                    <i class="fas fa-check-double text-white text-3xl"></i>
+                                    <i class="fas fa-check-double text-white text-2xl sm:text-3xl"></i>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
+                                <div class="min-w-0 flex-1">
                                     <dl>
-                                        <dt class="text-sm font-medium text-green-100 truncate">On Time</dt>
-                                        <dd class="text-2xl font-bold text-white" x-text="stats.completed_on_time"></dd>
+                                        <dt class="text-xs sm:text-sm font-medium text-green-100 truncate">On Time</dt>
+                                        <dd class="text-xl sm:text-2xl font-bold text-white" x-text="stats.completed_on_time"></dd>
                                     </dl>
                                 </div>
                             </div>
@@ -145,15 +145,15 @@
 
                     <!-- Late Completion -->
                     <div class="bg-gradient-to-br from-red-500 to-red-600 overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow">
-                        <div class="p-5">
-                            <div class="flex items-center">
+                        <div class="p-3 sm:p-4 md:p-5">
+                            <div class="flex items-center gap-3 sm:gap-4">
                                 <div class="flex-shrink-0">
-                                    <i class="fas fa-exclamation-circle text-white text-3xl"></i>
+                                    <i class="fas fa-exclamation-circle text-white text-2xl sm:text-3xl"></i>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
+                                <div class="min-w-0 flex-1">
                                     <dl>
-                                        <dt class="text-sm font-medium text-red-100 truncate">Late Completion</dt>
-                                        <dd class="text-2xl font-bold text-white" x-text="stats.completed_late"></dd>
+                                        <dt class="text-xs sm:text-sm font-medium text-red-100 truncate">Late Completion</dt>
+                                        <dd class="text-xl sm:text-2xl font-bold text-white" x-text="stats.completed_late"></dd>
                                     </dl>
                                 </div>
                             </div>
