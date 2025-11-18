@@ -217,7 +217,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/users', [ReportsController::class, 'users'])->name('users');
             Route::get('/time-tracking', [ReportsController::class, 'timeTracking'])->name('time-tracking');
             Route::get('/performance', [ReportsController::class, 'performance'])->name('performance');
-            Route::get('/export', [ReportsController::class, 'export'])->name('export-json');
+            // Route::get('/export', [ReportsController::class, 'export'])->name('export-json'); // DISABLED: Conflict with new export system
             
             // Advanced Reports
             Route::prefix('advanced')->name('advanced.')->group(function () {
