@@ -16,16 +16,25 @@ class ProjectCommentController extends Controller
     {
         $project = Project::findOrFail($projectId);
         
-        // Check permission: only project members can view comments
+        // Enhanced permission check - allow all project members to comment
         $user = Auth::user();
-        $isMember = $project->members()
-            ->where('user_id', $user->user_id)
-            ->exists();
+        $hasAccess = false;
         
-        $isLeader = $project->leader_id === $user->user_id;
-
-        if (!$isMember && !$isLeader && $user->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
+        // Admin always has access
+        if ($user->role === 'admin') {
+            $hasAccess = true;
+        }
+        // Project leader has access
+        elseif ($project->leader_id === $user->user_id) {
+            $hasAccess = true;
+        }
+        // Check if user is project member (developer, designer, project_manager)
+        elseif ($project->members()->where('user_id', $user->user_id)->exists()) {
+            $hasAccess = true;
+        }
+        
+        if (!$hasAccess) {
+            return response()->json(['error' => 'Unauthorized - Only project members can participate in project discussions'], 403);
         }
 
         $comments = DB::table('project_comments')
@@ -72,16 +81,25 @@ class ProjectCommentController extends Controller
 
         $project = Project::findOrFail($projectId);
 
-        // Check permission: only project members can comment
+        // Enhanced permission check - allow all project members to comment
         $user = Auth::user();
-        $isMember = $project->members()
-            ->where('user_id', $user->user_id)
-            ->exists();
+        $hasAccess = false;
         
-        $isLeader = $project->leader_id === $user->user_id;
-
-        if (!$isMember && !$isLeader && $user->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
+        // Admin always has access
+        if ($user->role === 'admin') {
+            $hasAccess = true;
+        }
+        // Project leader has access
+        elseif ($project->leader_id === $user->user_id) {
+            $hasAccess = true;
+        }
+        // Check if user is project member (developer, designer, project_manager)
+        elseif ($project->members()->where('user_id', $user->user_id)->exists()) {
+            $hasAccess = true;
+        }
+        
+        if (!$hasAccess) {
+            return response()->json(['error' => 'Unauthorized - Only project members can participate in project discussions'], 403);
         }
 
         $commentId = DB::table('project_comments')->insertGetId([
