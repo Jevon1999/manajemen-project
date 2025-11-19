@@ -35,6 +35,15 @@ class NotificationController extends Controller
      */
     public function recent()
     {
+        $user = Auth::user();
+        
+        // Debug logging untuk troubleshoot user role issue
+        \Log::info('NotificationController::recent called', [
+            'user_id' => $user->user_id ?? 'null',
+            'user_role' => $user->role ?? 'null',
+            'user_name' => $user->full_name ?? 'null',
+        ]);
+        
         $notifications = Notification::where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->limit(10)
@@ -53,6 +62,11 @@ class NotificationController extends Controller
                     'color' => $this->getNotificationColor($notification->type),
                 ];
             });
+            
+        \Log::info('NotificationController::recent result', [
+            'notifications_count' => $notifications->count(),
+            'user_id' => Auth::id(),
+        ]);
         
         return response()->json([
             'success' => true,
@@ -65,9 +79,21 @@ class NotificationController extends Controller
      */
     public function unreadCount()
     {
+        $user = Auth::user();
+        
+        \Log::info('NotificationController::unreadCount called', [
+            'user_id' => $user->user_id ?? 'null',
+            'user_role' => $user->role ?? 'null',
+        ]);
+        
         $count = Notification::where('user_id', Auth::id())
             ->unread()
             ->count();
+            
+        \Log::info('NotificationController::unreadCount result', [
+            'count' => $count,
+            'user_id' => Auth::id(),
+        ]);
         
         return response()->json([
             'success' => true,

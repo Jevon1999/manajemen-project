@@ -11,60 +11,60 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Total Projects -->
         <div class="ph-metric-card group">
-            <div class="absolute -top-4 -left-4 w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--ph-primary-500)] to-[var(--ph-primary-400)] flex items-center justify-center opacity-90 shadow-md group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            <div class="absolute -top-4 -left-4 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[var(--ph-primary-500)] to-[var(--ph-primary-400)] flex items-center justify-center opacity-90 shadow-md group-hover:scale-110 transition-transform">
+                <svg class="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
             </div>
-            <div class="pl-0 sm:pl-16 pt-2">
+            <div class="pl-12 sm:pl-16 pt-2">
                 <dl>
-                    <dt class="text-sm font-semibold truncate" style="color: var(--ph-gray-600)">Total Projects</dt>
-                    <dd class="text-2xl font-bold" style="color: var(--ph-gray-900)">{{ $stats['totalProjects'] }}</dd>
-                    <dd class="text-sm mt-1" style="color: var(--ph-gray-500)">{{ $stats['activeProjects'] }} active</dd>
+                    <dt class="text-xs sm:text-sm font-semibold truncate" style="color: var(--ph-gray-600)">Total Projects</dt>
+                    <dd class="text-xl sm:text-2xl font-bold" style="color: var(--ph-gray-900)">{{ $stats['totalProjects'] }}</dd>
+                    <dd class="text-xs sm:text-sm mt-1" style="color: var(--ph-gray-500)">{{ $stats['activeProjects'] }} active</dd>
                 </dl>
             </div>
         </div>
 
         <!-- Total Users -->
         <div class="ph-metric-card group">
-            <div class="absolute -top-4 -left-4 w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--ph-info)] to-[var(--ph-primary-500)] flex items-center justify-center opacity-90 shadow-md group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+            <div class="absolute -top-4 -left-4 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[var(--ph-info)] to-[var(--ph-primary-500)] flex items-center justify-center opacity-90 shadow-md group-hover:scale-110 transition-transform">
+                <svg class="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
             </div>
-            <div class="pl-0 sm:pl-16 pt-2">
+            <div class="pl-12 sm:pl-16 pt-2">
                 <dl>
-                    <dt class="text-sm font-semibold truncate" style="color: var(--ph-gray-600)">Total Users</dt>
-                    <dd class="text-2xl font-bold" style="color: var(--ph-gray-900)">{{ $stats['totalUsers'] }}</dd>
-                    <dd class="text-sm mt-1" style="color: var(--ph-gray-500)">{{ $stats['totalLeaders'] }} leaders</dd>
+                    <dt class="text-xs sm:text-sm font-semibold truncate" style="color: var(--ph-gray-600)">Total Users</dt>
+                    <dd class="text-xl sm:text-2xl font-bold" style="color: var(--ph-gray-900)">{{ $stats['totalUsers'] }}</dd>
+                    <dd class="text-xs sm:text-sm mt-1" style="color: var(--ph-gray-500)">{{ $stats['totalLeaders'] }} leaders</dd>
                 </dl>
             </div>
         </div>
 
         <!-- Total Tasks -->
         <div class="ph-metric-card group">
-            <div class="absolute -top-4 -left-4 w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--ph-warning)] to-[var(--ph-primary-500)] flex items-center justify-center opacity-90 shadow-md group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            <div class="absolute -top-4 -left-4 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[var(--ph-warning)] to-[var(--ph-primary-500)] flex items-center justify-center opacity-90 shadow-md group-hover:scale-110 transition-transform">
+                <svg class="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
             </div>
-            <div class="pl-0 sm:pl-16 pt-2">
+            <div class="pl-12 sm:pl-16 pt-2">
                 <dl>
-                    <dt class="text-sm font-semibold truncate" style="color: var(--ph-gray-600)">Total Tasks</dt>
-                    <dd class="text-2xl font-bold" style="color: var(--ph-gray-900)">{{ $stats['totalCards'] }}</dd>
-                    <dd class="text-sm mt-1" style="color: var(--ph-gray-500)">{{ $stats['completedCards'] }} completed</dd>
+                    <dt class="text-xs sm:text-sm font-semibold truncate" style="color: var(--ph-gray-600)">Total Tasks</dt>
+                    <dd class="text-xl sm:text-2xl font-bold" style="color: var(--ph-gray-900)">{{ $stats['totalCards'] }}</dd>
+                    <dd class="text-xs sm:text-sm mt-1" style="color: var(--ph-gray-500)">{{ $stats['completedCards'] }} completed</dd>
                 </dl>
             </div>
         </div>
 
         <!-- Completion Rate -->
         <div class="ph-metric-card group">
-            <div class="absolute -top-4 -left-4 w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--ph-success)] to-[var(--ph-primary-400)] flex items-center justify-center opacity-90 shadow-md group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <div class="absolute -top-4 -left-4 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[var(--ph-success)] to-[var(--ph-primary-400)] flex items-center justify-center opacity-90 shadow-md group-hover:scale-110 transition-transform">
+                <svg class="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
             </div>
-            <div class="pl-0 sm:pl-16 pt-2">
+            <div class="pl-12 sm:pl-16 pt-2">
                 <dl>
-                    <dt class="text-sm font-semibold truncate" style="color: var(--ph-gray-600)">Completion Rate</dt>
+                    <dt class="text-xs sm:text-sm font-semibold truncate" style="color: var(--ph-gray-600)">Completion Rate</dt>
                     @php
                         $completionPercent = $stats['totalCards'] > 0 ? round(($stats['completedCards'] / $stats['totalCards']) * 100, 1) : 0;
                     @endphp
-                    <dd class="text-2xl font-bold" style="color: var(--ph-gray-900)">{{ $completionPercent }}%</dd>
-                    <dd class="mt-3">
-                        <div style="width: 100%; height: 8px; background-color: var(--ph-gray-200); border-radius: var(--ph-radius-sm); overflow: hidden;">
+                    <dd class="text-xl sm:text-2xl font-bold" style="color: var(--ph-gray-900)">{{ $completionPercent }}%</dd>
+                    <dd class="mt-2 sm:mt-3">
+                        <div style="width: 100%; height: 6px; background-color: var(--ph-gray-200); border-radius: var(--ph-radius-sm); overflow: hidden;">
                             <div style="height: 100%; background: linear-gradient(90deg, var(--ph-success), var(--ph-primary-400)); border-radius: var(--ph-radius-sm); width: {{ $completionPercent }}%; transition: width 0.3s ease-in-out;"></div>
                         </div>
                     </dd>

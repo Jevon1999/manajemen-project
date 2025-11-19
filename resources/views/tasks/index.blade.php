@@ -11,9 +11,9 @@
     <div class="flex justify-between items-center mb-6">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">
-                <a href="{{ route('admin.projects.show', $project->project_id) }}" class="text-blue-600 hover:text-blue-800">
+                <span class="text-gray-800">
                     {{ $project->project_name }}
-                </a>
+                </span>
                 <span class="text-gray-400">/</span> Tasks
             </h1>
             <p class="text-gray-600">Manage project tasks and track progress</p>
