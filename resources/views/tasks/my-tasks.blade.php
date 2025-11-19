@@ -344,6 +344,123 @@
         </div>
         @endforelse
     </div>
+
+    <!-- Project Discussions Section -->
+    @php
+        // Get user's projects for discussion
+        $userProjects = \App\Models\Project::whereHas('members', function($query) {
+            $query->where('user_id', Auth::id());
+        })->with(['leader', 'members'])->get();
+    @endphp
+    
+    @if($userProjects->count() > 0)
+    <div class="mt-12 bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 bg-blue-100 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">Project Discussions</h2>
+                        <p class="text-sm text-gray-600">Collaborate with your team on project-related topics</p>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-500">
+                    💡 Stay connected with your project team
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            <!-- Project Tabs -->
+            <div class="mb-6 border-b border-gray-200">
+                <nav class="-mb-px flex space-x-6 overflow-x-auto">
+                    @foreach($userProjects as $index => $project)
+                    <button class="project-discussion-tab {{ $index === 0 ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm flex items-center space-x-2"
+                            data-project-id="{{ $project->project_id }}"
+                            data-project-name="{{ $project->project_name }}">
+                        <span>{{ Str::limit($project->project_name, 25) }}</span>
+                        <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">
+                            {{ $project->members->count() }} members
+                        </span>
+                    </button>
+                    @endforeach
+                </nav>
+            </div>
+
+            <!-- Discussion Content -->
+            <div class="project-discussion-content">
+                <!-- Comments Container -->
+                <div id="project-comments-container" class="mb-6">
+                    <div class="flex items-center justify-center py-12">
+                        <svg class="animate-spin h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="ml-2 text-gray-500">Loading discussions...</span>
+                    </div>
+                </div>
+
+                <!-- Comment Form -->
+                <div class="bg-gray-50 rounded-lg border border-gray-200 p-4">
+                    <form id="project-comment-form" class="space-y-4">
+                        <div>
+                            <label for="project-comment" class="block text-sm font-medium text-gray-700 mb-2">
+                                Join the project discussion
+                            </label>
+                            <textarea id="project-comment" 
+                                      name="comment" 
+                                      rows="3" 
+                                      class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                                      placeholder="Share your thoughts, ask questions, or provide project updates..."
+                                      maxlength="1000"></textarea>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-xs text-gray-500">
+                                    <span id="comment-char-count">0</span>/1000 characters
+                                </span>
+                                <span class="text-xs text-gray-500">
+                                    💬 Visible to all project members
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-4 text-xs text-gray-500">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-2"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H9v4l-4-4H3a2 2 0 01-2-2v-2a2 2 0 012-2h2V8a2 2 0 012-2z"></path>
+                                    </svg>
+                                    Great for coordination
+                                </span>
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                    </svg>
+                                    Share updates
+                                </span>
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Ask questions
+                                </span>
+                            </div>
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                </svg>
+                                Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 
 <!-- Extension Request Modal -->
@@ -827,5 +944,279 @@ document.addEventListener('DOMContentLoaded', function() {
 
 {{-- Work Timer Script --}}
 <script src="{{ asset('js/work-timer.js') }}"></script>
+
+{{-- Project Discussion Script --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Project Discussion Variables
+    let currentProjectDiscussionId = null;
+    
+    // Initialize project discussion
+    initializeProjectDiscussion();
+    
+    function initializeProjectDiscussion() {
+        // Get first project tab
+        const firstTab = document.querySelector('.project-discussion-tab');
+        if (firstTab) {
+            currentProjectDiscussionId = firstTab.getAttribute('data-project-id');
+            loadProjectComments(currentProjectDiscussionId);
+        }
+        
+        // Handle tab switching
+        document.querySelectorAll('.project-discussion-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Update active tab
+                document.querySelectorAll('.project-discussion-tab').forEach(t => {
+                    t.classList.remove('border-blue-500', 'text-blue-600');
+                    t.classList.add('border-transparent', 'text-gray-500');
+                });
+                this.classList.add('border-blue-500', 'text-blue-600');
+                this.classList.remove('border-transparent', 'text-gray-500');
+                
+                // Load comments for selected project
+                currentProjectDiscussionId = this.getAttribute('data-project-id');
+                loadProjectComments(currentProjectDiscussionId);
+            });
+        });
+        
+        // Handle comment form submission
+        const commentForm = document.getElementById('project-comment-form');
+        if (commentForm) {
+            commentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!currentProjectDiscussionId) {
+                    showNotification('❌ Please select a project first', 'error');
+                    return;
+                }
+                
+                const comment = document.getElementById('project-comment').value.trim();
+                if (!comment) {
+                    showNotification('❌ Please enter a comment', 'error');
+                    return;
+                }
+                
+                addProjectComment(currentProjectDiscussionId, comment);
+            });
+        }
+        
+        // Character counter for comment
+        const commentTextarea = document.getElementById('project-comment');
+        const charCount = document.getElementById('comment-char-count');
+        if (commentTextarea && charCount) {
+            commentTextarea.addEventListener('input', function() {
+                charCount.textContent = this.value.length;
+            });
+        }
+    }
+    
+    // Load comments for a project
+    function loadProjectComments(projectId) {
+        const container = document.getElementById('project-comments-container');
+        
+        // Show loading
+        container.innerHTML = `
+            <div class="flex items-center justify-center py-12">
+                <svg class="animate-spin h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="ml-2 text-gray-500">Loading discussions...</span>
+            </div>
+        `;
+        
+        fetch(`/projects/${projectId}/comments`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayProjectComments(data.comments);
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center py-12">
+                            <div class="text-red-500 mb-2">❌ Error loading comments</div>
+                            <p class="text-gray-500 text-sm">${data.error || 'Unknown error'}</p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading comments:', error);
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="text-red-500 mb-2">❌ Failed to load discussions</div>
+                        <p class="text-gray-500 text-sm">Please check your connection and try again</p>
+                        <button onclick="loadProjectComments(${projectId})" class="mt-2 px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200">Retry</button>
+                    </div>
+                `;
+            });
+    }
+    
+    // Display comments
+    function displayProjectComments(comments) {
+        const container = document.getElementById('project-comments-container');
+        
+        if (comments.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No discussions yet</h3>
+                    <p class="text-gray-500">Be the first to start a conversation about this project!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const commentsHtml = comments.map(comment => `
+            <div class="flex space-x-4 p-4 bg-white border border-gray-200 rounded-lg hover:shadow-sm transition-shadow group">
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r ${getAvatarGradient(comment.user.role)} flex items-center justify-center text-white font-bold text-sm">
+                        ${comment.user.initials}
+                    </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center space-x-2 mb-1">
+                        <h4 class="font-medium text-gray-900">${comment.user.name}</h4>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeClass(comment.user.role)}">
+                            ${formatRole(comment.user.role)}
+                        </span>
+                        <span class="text-xs text-gray-500">${comment.created_at_human}</span>
+                    </div>
+                    <div class="text-gray-700 whitespace-pre-wrap break-words">${comment.comment}</div>
+                    ${comment.is_owner ? `
+                        <div class="mt-2">
+                            <button onclick="deleteProjectComment(${comment.comment_id})" 
+                                    class="text-xs text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = `
+            <div class="space-y-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-medium text-gray-800">Discussion (${comments.length} messages)</h3>
+                    <button onclick="loadProjectComments(${currentProjectDiscussionId})" class="text-xs text-gray-500 hover:text-gray-700">
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+                <div class="max-h-96 overflow-y-auto space-y-3">
+                    ${commentsHtml}
+                </div>
+            </div>
+        `;
+    }
+    
+    // Add comment
+    function addProjectComment(projectId, comment) {
+        const submitBtn = document.querySelector('#project-comment-form button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+            <svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Sending...
+        `;
+        
+        fetch(`/projects/${projectId}/comments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ comment: comment })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('project-comment').value = '';
+                document.getElementById('comment-char-count').textContent = '0';
+                loadProjectComments(projectId);
+                showNotification('✅ Message sent successfully!', 'success');
+            } else {
+                showNotification('❌ ' + (data.error || 'Failed to send message'), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('❌ Error sending message. Please try again.', 'error');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        });
+    }
+    
+    // Delete comment
+    window.deleteProjectComment = function(commentId) {
+        if (!confirm('Are you sure you want to delete this message?')) return;
+        
+        fetch(`/projects/${currentProjectDiscussionId}/comments/${commentId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadProjectComments(currentProjectDiscussionId);
+                showNotification('🗑️ Message deleted', 'success');
+            } else {
+                showNotification('❌ Failed to delete message', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('❌ Error deleting message', 'error');
+        });
+    }
+    
+    // Helper functions
+    function getAvatarGradient(role) {
+        switch(role) {
+            case 'admin': return 'from-red-500 to-pink-600';
+            case 'leader': return 'from-purple-500 to-indigo-600';
+            case 'developer': return 'from-blue-500 to-cyan-600';
+            case 'designer': return 'from-pink-500 to-rose-600';
+            default: return 'from-gray-500 to-gray-600';
+        }
+    }
+    
+    function getRoleBadgeClass(role) {
+        switch(role) {
+            case 'admin': return 'bg-red-100 text-red-800';
+            case 'leader': return 'bg-purple-100 text-purple-800';
+            case 'developer': return 'bg-blue-100 text-blue-800';
+            case 'designer': return 'bg-pink-100 text-pink-800';
+            default: return 'bg-gray-100 text-gray-800';
+        }
+    }
+    
+    function formatRole(role) {
+        const roleMap = {
+            'admin': '👑 Admin',
+            'leader': '👨‍💼 Leader',
+            'developer': '💻 Developer',
+            'designer': '🎨 Designer'
+        };
+        return roleMap[role] || role;
+    }
+});
+</script>
 @endpush
 @endsection
