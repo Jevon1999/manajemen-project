@@ -243,11 +243,21 @@ class NotificationController extends Controller
             // Handle different notification types safely
             switch ($notification->type) {
                 case 'project_completed':
-                    // For project completion notifications, admin goes to dashboard
-                    if ($user->role === 'admin') {
-                        return route('dashboard'); // admin dashboard
+                    // For project completion notifications, go to project detail
+                    $projectId = $data['project_id'] ?? null;
+                    if ($projectId) {
+                        if ($user->role === 'admin') {
+                            // Admin goes to manage projects page 
+                            return route('manage-projects');
+                        } elseif ($user->role === 'leader') {
+                            return route('leader.projects.show', $projectId);
+                        } else {
+                            // For other roles, go to dashboard
+                            return route('dashboard');
+                        }
                     }
-                    return route('dashboard'); // fallback to general dashboard
+                    // Fallback if no project_id
+                    return route('dashboard');
                     
                 case 'task_assigned':
                 case 'task_status_changed':
