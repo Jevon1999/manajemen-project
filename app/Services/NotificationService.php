@@ -186,4 +186,47 @@ class NotificationService
             ->where('user_id', $user->user_id)
             ->update(['read_at' => now()]);
     }
+
+    /**
+     * Send project completion notification to admin
+     */
+    public function notifyProjectCompletion(Project $project, User $completedBy)
+    {
+        try {
+            // Get all admin users
+            $adminUsers = DB::table('users')
+                ->where('role', 'admin')
+                ->get();
+
+            foreach ($adminUsers as $admin) {
+                DB::table('notifications')->insert([
+                    'user_id' => $admin->user_id,
+                    'type' => 'project_completed',
+                    'title' => 'Project Completed',
+                    'message' => "Project '{$project->name}' has been completed by {$completedBy->name}",
+                    'data' => json_encode([
+                        'project_id' => $project->project_id,
+                        'project_name' => $project->name,
+                        'completed_by' => $completedBy->name,
+                        'completed_by_id' => $completedBy->user_id,
+                        'completion_date' => now()->toDateTimeString(),
+                        'project_start_date' => $project->start_date,
+                        'project_end_date' => $project->end_date
+                    ]),
+                    'read_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+
+            Log::info('Project completion notification sent to admin', [
+                'project_id' => $project->project_id,
+                'completed_by' => $completedBy->user_id,
+                'admin_count' => $adminUsers->count()
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to send project completion notification: ' . $e->getMessage());
+        }
+    }
 }
