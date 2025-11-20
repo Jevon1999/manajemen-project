@@ -238,6 +238,12 @@ class NotificationController extends Controller
         
         try {
             $data = $notification->data;
+            
+            // Ensure data is an array (decode if it's JSON string)
+            if (is_string($data)) {
+                $data = json_decode($data, true) ?? [];
+            }
+            
             $user = Auth::user();
             
             // Handle different notification types safely
@@ -245,12 +251,22 @@ class NotificationController extends Controller
                 case 'project_completed':
                     // For project completion notifications, go to project detail
                     $projectId = $data['project_id'] ?? null;
+                    
+                    Log::info('Processing project_completed notification', [
+                        'notification_id' => $notification->id,
+                        'user_role' => $user->role,
+                        'data' => $data,
+                        'project_id' => $projectId
+                    ]);
+                    
                     if ($projectId) {
                         if ($user->role === 'admin') {
                             // Admin goes to manage projects page 
                             return route('manage-projects');
                         } elseif ($user->role === 'leader') {
-                            return route('leader.projects.show', $projectId);
+                            $url = route('leader.projects.show', $projectId);
+                            Log::info('Generated URL for leader', ['url' => $url]);
+                            return $url;
                         } else {
                             // For other roles, go to dashboard
                             return route('dashboard');
