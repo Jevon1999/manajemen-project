@@ -169,10 +169,8 @@ function notificationBell() {
                 await this.markAsRead(notification.id);
             }
             
-            // Navigate to action URL
-            if (notification.action_url) {
-                window.location.href = notification.action_url;
-            }
+            // Always redirect to notifications page for simplicity
+            window.location.href = '/notifications';
             
             this.open = false;
         },

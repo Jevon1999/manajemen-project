@@ -59,16 +59,6 @@ class NotificationController extends Controller
                 ->limit(10)
                 ->get()
                 ->map(function ($notification) {
-                    $actionUrl = $this->getActionUrl($notification);
-                    
-                    Log::info('Notification in recent dropdown', [
-                        'id' => $notification->id,
-                        'type' => $notification->type,
-                        'raw_data' => $notification->data,
-                        'generated_action_url' => $actionUrl,
-                        'user_role' => Auth::user()->role
-                    ]);
-                    
                     return [
                         'id' => $notification->id,
                         'type' => $notification->type,
@@ -77,7 +67,7 @@ class NotificationController extends Controller
                         'data' => $notification->data,
                         'is_read' => $notification->isRead(),
                         'created_at' => $notification->created_at->diffForHumans(),
-                        'action_url' => $actionUrl,
+                        'action_url' => '/notifications', // Always go to notifications page
                         'icon' => $this->getNotificationIcon($notification->type),
                         'color' => $this->getNotificationColor($notification->type),
                     ];
