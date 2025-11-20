@@ -194,9 +194,7 @@ class NotificationService
     {
         try {
             // Get all admin users
-            $adminUsers = DB::table('users')
-                ->where('role', 'admin')
-                ->get();
+            $adminUsers = User::where('role', 'admin')->get();
 
             foreach ($adminUsers as $admin) {
                 DB::table('notifications')->insert([
