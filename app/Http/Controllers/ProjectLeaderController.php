@@ -723,6 +723,10 @@ class ProjectLeaderController extends Controller
                     );
                 }
             }
+
+            // Send notification to admin when project is completed
+            $notificationService = new \App\Services\NotificationService();
+            $notificationService->notifyProjectCompletion($project, $user);
             
             DB::commit();
             

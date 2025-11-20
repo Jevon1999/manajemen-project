@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class NotificationController extends Controller
 {
@@ -35,43 +36,64 @@ class NotificationController extends Controller
      */
     public function recent()
     {
+        // Check authentication first
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+        
         $user = Auth::user();
         
         // Debug logging untuk troubleshoot user role issue
-        \Log::info('NotificationController::recent called', [
+        Log::info('NotificationController::recent called', [
             'user_id' => $user->user_id ?? 'null',
             'user_role' => $user->role ?? 'null',
             'user_name' => $user->full_name ?? 'null',
         ]);
         
-        $notifications = Notification::where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get()
-            ->map(function ($notification) {
-                return [
-                    'id' => $notification->id,
-                    'type' => $notification->type,
-                    'title' => $notification->title,
-                    'message' => $notification->message,
-                    'data' => $notification->data,
-                    'is_read' => $notification->isRead(),
-                    'created_at' => $notification->created_at->diffForHumans(),
-                    'action_url' => $this->getActionUrl($notification),
-                    'icon' => $this->getNotificationIcon($notification->type),
-                    'color' => $this->getNotificationColor($notification->type),
-                ];
-            });
+        try {
+            $notifications = Notification::where('user_id', $user->user_id)
+                ->orderBy('created_at', 'desc')
+                ->limit(10)
+                ->get()
+                ->map(function ($notification) {
+                    return [
+                        'id' => $notification->id,
+                        'type' => $notification->type,
+                        'title' => $notification->title,
+                        'message' => $notification->message,
+                        'data' => $notification->data,
+                        'is_read' => $notification->isRead(),
+                        'created_at' => $notification->created_at->diffForHumans(),
+                        'action_url' => $this->getActionUrl($notification),
+                        'icon' => $this->getNotificationIcon($notification->type),
+                        'color' => $this->getNotificationColor($notification->type),
+                    ];
+                });
+                
+            Log::info('NotificationController::recent result', [
+                'notifications_count' => $notifications->count(),
+                'user_id' => $user->user_id,
+            ]);
             
-        \Log::info('NotificationController::recent result', [
-            'notifications_count' => $notifications->count(),
-            'user_id' => Auth::id(),
-        ]);
-        
-        return response()->json([
-            'success' => true,
-            'notifications' => $notifications
-        ]);
+            return response()->json([
+                'success' => true,
+                'notifications' => $notifications
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('NotificationController::recent error', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->user_id ?? 'null'
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch notifications'
+            ], 500);
+        }
     }
     
     /**
@@ -79,26 +101,47 @@ class NotificationController extends Controller
      */
     public function unreadCount()
     {
+        // Check authentication first
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+        
         $user = Auth::user();
         
-        \Log::info('NotificationController::unreadCount called', [
+        Log::info('NotificationController::unreadCount called', [
             'user_id' => $user->user_id ?? 'null',
             'user_role' => $user->role ?? 'null',
         ]);
         
-        $count = Notification::where('user_id', Auth::id())
-            ->unread()
-            ->count();
+        try {
+            $count = Notification::where('user_id', $user->user_id)
+                ->unread()
+                ->count();
+                
+            Log::info('NotificationController::unreadCount result', [
+                'count' => $count,
+                'user_id' => $user->user_id,
+            ]);
             
-        \Log::info('NotificationController::unreadCount result', [
-            'count' => $count,
-            'user_id' => Auth::id(),
-        ]);
-        
-        return response()->json([
-            'success' => true,
-            'count' => $count
-        ]);
+            return response()->json([
+                'success' => true,
+                'count' => $count
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('NotificationController::unreadCount error', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->user_id ?? 'null'
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to get unread count'
+            ], 500);
+        }
     }
     
     /**
@@ -193,63 +236,65 @@ class NotificationController extends Controller
     {
         /** @var Notification $notification */
         
-        $data = $notification->data;
-        
-        // Handle extension request notifications
-        if ($notification->type === 'extension_requested') {
-            // Leader goes to extension requests page
-            return route('extension-requests.index');
-        }
-        
-        if ($notification->type === 'extension_approved' || $notification->type === 'extension_rejected') {
-            // Developer goes to the task
-            $entityType = $data['entity_type'] ?? 'card';
-            $entityId = $data['entity_id'] ?? $data['card_id'] ?? null;
+        try {
+            $data = $notification->data;
+            $user = Auth::user();
             
-            if ($entityId) {
-                /** @var \App\Models\User $user */
-                $user = Auth::user();
-                
-                if ($entityType === 'task') {
-                    // For Task entity, go to task detail page
-                    return route('tasks.show', $entityId);
-                } else {
-                    // For Card entity (board task), go to role-specific task page
-                    if ($user->isDeveloper() || $user->isDesigner()) {
-                        return route('developer.tasks.show', $entityId);
-                    } elseif ($user->isLeader()) {
-                        return route('leader.tasks.show', $entityId);
-                    } elseif ($user->isAdmin()) {
-                        return route('admin.tasks.show', $entityId);
+            // Handle different notification types safely
+            switch ($notification->type) {
+                case 'project_completed':
+                    // For project completion notifications, admin goes to dashboard
+                    if ($user->role === 'admin') {
+                        return route('dashboard'); // admin dashboard
                     }
-                }
+                    return route('dashboard'); // fallback to general dashboard
+                    
+                case 'task_assigned':
+                case 'task_status_changed':
+                case 'task_overdue':
+                    // For task notifications, provide safe defaults based on user role
+                    if ($user->role === 'admin') {
+                        return route('dashboard');
+                    } elseif ($user->role === 'leader') {
+                        return route('leader.dashboard');
+                    } else {
+                        return route('dashboard'); // general dashboard for developer/designer
+                    }
+                    
+                case 'extension_requested':
+                    if ($user->role === 'leader') {
+                        return route('leader.dashboard');
+                    }
+                    return route('dashboard');
+                    
+                case 'extension_approved':
+                case 'extension_rejected':
+                    if ($user->role === 'developer' || $user->role === 'designer') {
+                        return route('dashboard');
+                    }
+                    return route('dashboard');
+                    
+                default:
+                    // Safe default based on user role
+                    if ($user->role === 'admin') {
+                        return route('dashboard');
+                    } elseif ($user->role === 'leader') {
+                        return route('leader.dashboard');
+                    } else {
+                        return route('dashboard');
+                    }
             }
-            return route('tasks.index');
+            
+        } catch (\Exception $e) {
+            Log::error('Error generating action URL', [
+                'notification_id' => $notification->id,
+                'notification_type' => $notification->type,
+                'error' => $e->getMessage()
+            ]);
+            
+            // Return safe default
+            return route('dashboard');
         }
-        
-        // Handle project notifications
-        if ($notification->type === 'project_assigned' && isset($data['project_id'])) {
-            return route('admin.projects.show', $data['project_id']);
-        }
-        
-        // Default to tasks page if no specific URL
-        if (!$data || !isset($data['task_id'])) {
-            return route('tasks.index');
-        }
-        
-        // Check user role for appropriate route
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        
-        if ($user->isDeveloper() || $user->isDesigner()) {
-            return route('developer.tasks.show', $data['task_id']);
-        } elseif ($user->isLeader()) {
-            return route('leader.tasks.show', $data['task_id']);
-        } elseif ($user->isAdmin()) {
-            return route('admin.tasks.show', $data['task_id']);
-        }
-        
-        return route('tasks.index');
     }
     
     /**
