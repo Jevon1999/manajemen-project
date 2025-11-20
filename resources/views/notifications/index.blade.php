@@ -80,6 +80,7 @@
                             'task_overdue' => '🚨',
                             'work_session_reminder' => '⏱️',
                             'task_completed' => '🎉',
+                            'project_completed' => '🎯',
                             default => '🔔',
                         };
                         
@@ -93,6 +94,7 @@
                             'task_overdue' => 'border-red-300',
                             'work_session_reminder' => 'border-orange-200',
                             'task_completed' => 'border-green-200',
+                            'project_completed' => 'border-green-300',
                             default => 'border-gray-200',
                         };
                     @endphp
@@ -138,14 +140,36 @@
                             Lihat Task
                         </a>
                         @elseif($notification->data && isset($notification->data['project_id']))
-                        <a href="{{ route('leader.projects.show', $notification->data['project_id']) }}" 
+                        @php
+                            $projectId = $notification->data['project_id'];
+                            $userRole = Auth::user()->role;
+                            
+                            // Determine the correct route based on user role and notification type
+                            if ($notification->type === 'project_completed') {
+                                if ($userRole === 'admin') {
+                                    $projectUrl = route('manage-projects');
+                                } elseif ($userRole === 'leader') {
+                                    $projectUrl = route('leader.projects.show', $projectId);
+                                } else {
+                                    $projectUrl = route('dashboard');
+                                }
+                            } else {
+                                // For other project notifications, default behavior
+                                $projectUrl = route('leader.projects.show', $projectId);
+                            }
+                        @endphp
+                        <a href="{{ $projectUrl }}" 
                            onclick="markAsRead({{ $notification->id }})"
                            class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                             </svg>
-                            Lihat Project
+                            @if($notification->type === 'project_completed')
+                                Lihat Project
+                            @else
+                                Lihat Project
+                            @endif
                         </a>
                         @endif
                         
