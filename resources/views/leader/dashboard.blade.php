@@ -164,11 +164,11 @@
                 <!-- Completed Projects List -->
                 <section class="bg-white shadow rounded-lg mb-8">
                     <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                        <h3 class="text-lg font-medium text-gray-900 flex items-center">
+                        <h3 class="text-lg font-semibold text-gray-900">
                             <i class="fas fa-trophy mr-2 text-yellow-500"></i>
                             Recently Completed Projects
                         </h3>
-                        <a href="{{ route('leader.projects.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800">
+                        <a href="{{ route('leader.projects') }}" class="text-sm text-indigo-600 hover:text-indigo-800">
                             View All Projects →
                         </a>
                     </div>
