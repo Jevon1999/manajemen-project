@@ -262,7 +262,7 @@ class NotificationController extends Controller
                     if ($projectId) {
                         if ($user->role === 'admin') {
                             // Admin goes to manage projects page 
-                            return route('manage-projects');
+                            return route('admin.manage-projects');
                         } elseif ($user->role === 'leader') {
                             $url = route('leader.projects.show', $projectId);
                             Log::info('Generated URL for leader', ['url' => $url]);

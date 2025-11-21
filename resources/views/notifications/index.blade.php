@@ -147,7 +147,7 @@
                             // Determine the correct route based on user role and notification type
                             if ($notification->type === 'project_completed') {
                                 if ($userRole === 'admin') {
-                                    $projectUrl = route('manage-projects');
+                                    $projectUrl = route('admin.manage-projects');
                                 } elseif ($userRole === 'leader') {
                                     $projectUrl = route('leader.projects.show', $projectId);
                                 } else {
